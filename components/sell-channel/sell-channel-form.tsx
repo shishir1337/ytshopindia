@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -16,6 +17,7 @@ import { Loader2, User, Phone, Link as LinkIcon, DollarSign, Mail, RefreshCw, Sh
 
 export function SellChannelForm() {
   const [formData, setFormData] = React.useState({
+    title: "",
     name: "",
     whatsapp: "",
     channelLink: "",
@@ -50,6 +52,10 @@ export function SellChannelForm() {
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
+
+    if (!formData.title.trim()) {
+      newErrors.title = "Channel title is required"
+    }
 
     if (!formData.name.trim()) {
       newErrors.name = "Name is required"
@@ -102,6 +108,7 @@ export function SellChannelForm() {
     if (!validateForm()) {
       // Mark all fields as touched on submit
       setTouched({
+        title: true,
         name: true,
         whatsapp: true,
         channelLink: true,
@@ -116,47 +123,112 @@ export function SellChannelForm() {
 
     setIsSubmitting(true)
 
-    // Format message for WhatsApp
-    const message = `*Sell Channel Request - YT SHOP INDIA*
-
-*Name:* ${formData.name}
-*WhatsApp Number:* ${formData.whatsapp}
-*Email:* ${formData.email}
-*Channel Link:* ${formData.channelLink}
-*Monetization Status:* ${formData.monetizationStatus}
-*Expected Price:* ${formData.currency} ${formData.expectedPrice}
-
----
-This message was sent from the YT SHOP INDIA website.`
-
-    const whatsappUrl = `https://wa.me/919101782780?text=${encodeURIComponent(message)}`
-
-    // Open WhatsApp
-    window.open(whatsappUrl, "_blank")
-
-    // Reset form after a delay
-    setTimeout(() => {
-      setFormData({
-        name: "",
-        whatsapp: "",
-        channelLink: "",
-        monetizationStatus: "",
-        email: "",
-        expectedPrice: "",
-        currency: "₹",
-        captchaAnswer: "",
-        agreedToTerms: false,
+    try {
+      const response = await fetch("/api/listings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: formData.title,
+          channelLink: formData.channelLink,
+          sellerName: formData.name,
+          sellerEmail: formData.email,
+          sellerWhatsapp: formData.whatsapp,
+          expectedPrice: formData.expectedPrice,
+          currency: formData.currency,
+          monetizationStatus: formData.monetizationStatus,
+        }),
       })
-      setTouched({})
-      generateCaptcha()
+
+      if (response.ok) {
+        const data = await response.json()
+        toast.success("Listing submitted successfully!", {
+          description: "Your listing has been submitted for admin review. Redirecting to WhatsApp...",
+        })
+        // Reset form
+        setFormData({
+          title: "",
+          name: "",
+          whatsapp: "",
+          channelLink: "",
+          monetizationStatus: "",
+          email: "",
+          expectedPrice: "",
+          currency: "₹",
+          captchaAnswer: "",
+          agreedToTerms: false,
+        })
+        setTouched({})
+        generateCaptcha()
+        
+        // Redirect to WhatsApp URL if available
+        if (data.whatsappUrl) {
+          // Small delay to show the toast message
+          setTimeout(() => {
+            window.open(data.whatsappUrl, '_blank')
+          }, 1000)
+        }
+      } else {
+        const error = await response.json()
+        toast.error(error.error || "Failed to submit listing. Please try again.")
+      }
+    } catch (error) {
+      console.error("Error submitting listing:", error)
+      toast.error("Failed to submit listing. Please try again.")
+    } finally {
       setIsSubmitting(false)
-    }, 1000)
+    }
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Personal Information Section */}
+
+      {/* Channel Information Section */}
       <div className="space-y-5">
+        <div className="mb-4 pb-3 border-b border-border">
+          <h3 className="text-lg font-semibold text-foreground">Channel Information</h3>
+          <p className="text-sm text-muted-foreground mt-1">Details about your YouTube channel</p>
+        </div>
+
+        {/* Channel Title */}
+        <div className="space-y-2">
+          <Label htmlFor="title" className="flex items-center gap-2">
+            <LinkIcon className="size-4 text-muted-foreground" />
+            <span>Channel Title <span className="text-primary">*</span></span>
+          </Label>
+          <Input
+            id="title"
+            type="text"
+            placeholder="e.g., Free Fire Gaming Youtube Channel For Sale"
+            value={formData.title}
+            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+            onBlur={() => handleBlur("title")}
+            className={errors.title && touched.title ? "border-destructive" : ""}
+          />
+          {errors.title && touched.title && <p className="text-sm text-destructive">{errors.title}</p>}
+        </div>
+
+        {/* Channel Link */}
+        <div className="space-y-2">
+          <Label htmlFor="channelLink" className="flex items-center gap-2">
+            <LinkIcon className="size-4 text-muted-foreground" />
+            <span>Channel Link <span className="text-primary">*</span></span>
+          </Label>
+          <Input
+            id="channelLink"
+            type="url"
+            placeholder="https://www.youtube.com/@yourchannel or https://youtube.com/c/yourchannel"
+            value={formData.channelLink}
+            onChange={(e) => setFormData({ ...formData, channelLink: e.target.value })}
+            onBlur={() => handleBlur("channelLink")}
+            className={errors.channelLink && touched.channelLink ? "border-destructive" : ""}
+          />
+          <p className="text-xs text-muted-foreground">Paste your complete YouTube channel URL</p>
+          {errors.channelLink && touched.channelLink && <p className="text-sm text-destructive">{errors.channelLink}</p>}
+        </div>
+      </div>
+
+      {/* Personal Information Section */}
+      <div className="space-y-5 pt-6 border-t border-border">
         <div className="mb-4 pb-3 border-b border-border">
           <h3 className="text-lg font-semibold text-foreground">Personal Information</h3>
           <p className="text-sm text-muted-foreground mt-1">Tell us about yourself</p>
@@ -218,32 +290,6 @@ This message was sent from the YT SHOP INDIA website.`
         </div>
       </div>
 
-      {/* Channel Information Section */}
-      <div className="space-y-5 pt-6 border-t border-border">
-        <div className="mb-4 pb-3 border-b border-border">
-          <h3 className="text-lg font-semibold text-foreground">Channel Information</h3>
-          <p className="text-sm text-muted-foreground mt-1">Details about your YouTube channel</p>
-        </div>
-
-        {/* Channel Link */}
-        <div className="space-y-2">
-          <Label htmlFor="channelLink" className="flex items-center gap-2">
-            <LinkIcon className="size-4 text-muted-foreground" />
-            <span>Channel Link <span className="text-primary">*</span></span>
-          </Label>
-          <Input
-            id="channelLink"
-            type="url"
-            placeholder="https://www.youtube.com/@yourchannel or https://youtube.com/c/yourchannel"
-            value={formData.channelLink}
-            onChange={(e) => setFormData({ ...formData, channelLink: e.target.value })}
-            onBlur={() => handleBlur("channelLink")}
-            className={errors.channelLink && touched.channelLink ? "border-destructive" : ""}
-          />
-          <p className="text-xs text-muted-foreground">Paste your complete YouTube channel URL</p>
-          {errors.channelLink && touched.channelLink && <p className="text-sm text-destructive">{errors.channelLink}</p>}
-        </div>
-
         {/* Monetization Status */}
         <div className="space-y-2">
           <Label htmlFor="monetizationStatus">
@@ -300,7 +346,6 @@ This message was sent from the YT SHOP INDIA website.`
           </div>
           {errors.expectedPrice && touched.expectedPrice && <p className="text-sm text-destructive">{errors.expectedPrice}</p>}
         </div>
-      </div>
 
       {/* Verification Section */}
       <div className="space-y-5 pt-6 border-t border-border">
@@ -387,17 +432,17 @@ This message was sent from the YT SHOP INDIA website.`
           {isSubmitting ? (
             <>
               <Loader2 className="mr-2 size-5 animate-spin" />
-              Opening WhatsApp...
+              Submitting...
             </>
           ) : (
             <>
               <MessageCircle className="mr-2 size-5" />
-              Submit & Connect on WhatsApp
+              Submit Listing for Review
             </>
           )}
         </Button>
         <p className="text-xs text-center text-muted-foreground mt-3">
-          By submitting, you'll be redirected to WhatsApp to complete the process
+          Your listing will be reviewed by our admin team before being published
         </p>
       </div>
     </form>

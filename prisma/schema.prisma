@@ -112,3 +112,58 @@ model Verification {
   @@map("verification")
   @@index([identifier])
 }
+
+model ChannelListing {
+  id              String    @id @default(cuid())
+  title           String
+  description     String?   @db.Text
+  channelLink     String?
+  
+  // Seller Information
+  sellerName      String
+  sellerEmail     String
+  sellerWhatsapp  String
+  expectedPrice   String?
+  currency        String    @default("₹")
+  
+  // Images
+  featuredImage   String?
+  images          String[]  @default([])
+  
+  // Additional Details
+  startDate       DateTime?
+  category        String?
+  revenueSources  String?
+  monthlyRevenue  String?
+  
+  // Summary/Details
+  status          String    @default("pending") // pending, approved, sold, rejected
+  listingId       String?   @unique
+  subscribers     String?
+  creationDate    DateTime?
+  language        String?
+  videoCount      String?
+  channelType     String?
+  contentType     String?
+  viewsLast28Days String?
+  lifetimeViews   String?
+  copyrightStrike String?   @default("None")
+  communityStrike String?   @default("None")
+  monetized       Boolean?  @default(false)
+  shortsViews90Days String?
+  revenueLast28Days String?
+  lifetimeRevenue String?
+  
+  // Admin fields
+  approvedAt      DateTime?
+  approvedBy      String?
+  notes           String?   @db.Text
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([status])
+  @@index([listingId])
+  @@index([createdAt])
+  @@map("channel_listings")
+}
