@@ -16,9 +16,25 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "YTShop India - YouTube Channel Marketplace",
-  description: "A stunning YouTube channel listing marketplace - Buy and sell YouTube channels",
-};
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
+  title: {
+    default: "YTShop India - YouTube Channel Marketplace",
+    template: "%s | YTShop India",
+  },
+  description: "A stunning YouTube channel listing marketplace - Buy and sell YouTube channels with ease and security.",
+  keywords: ["YouTube channel", "buy YouTube channel", "sell YouTube channel", "YT marketplace", "India"],
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    url: "https://ytshopindia.com",
+    siteName: "YTShop India",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "YTShop India - YouTube Channel Marketplace",
+    description: "Buy and sell YouTube channels with ease and security.",
+  },
+}
 
 export default function RootLayout({
   children,

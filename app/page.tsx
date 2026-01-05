@@ -6,6 +6,12 @@ import { CreatorTestimonials } from "@/components/home/sections/creator-testimon
 import { Process } from "@/components/home/sections/process"
 import { Blog } from "@/components/home/sections/blog"
 import { FAQ } from "@/components/home/sections/faq"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Buy & Sell YouTube Channels | YTShop India Marketplace",
+  description: "YTShop India is the premier marketplace for buying and selling verified YouTube channels. Fast, secure, and trusted by thousands of creators.",
+}
 
 export default function Home() {
   return (
