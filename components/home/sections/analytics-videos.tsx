@@ -3,6 +3,7 @@
 import * as React from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { motion } from "motion/react"
 
 // Dummy YouTube video data - will be replaced with real data later
 const videos = [
@@ -46,7 +47,33 @@ const videos = [
 
 export function AnalyticsVideos() {
   const [currentIndex, setCurrentIndex] = React.useState(0)
-  const maxIndex = videos.length - 3 // Show 3 at a time
+  const [itemsToShow, setItemsToShow] = React.useState(3)
+
+  // Calculate items to show based on window width
+  React.useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 640) {
+        setItemsToShow(1)
+      } else if (window.innerWidth < 1024) {
+        setItemsToShow(2)
+      } else {
+        setItemsToShow(3)
+      }
+    }
+
+    handleResize()
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
+
+  const maxIndex = Math.max(0, videos.length - itemsToShow)
+
+  // Reset index if it exceeds max after resize
+  React.useEffect(() => {
+    if (currentIndex > maxIndex) {
+      setCurrentIndex(maxIndex)
+    }
+  }, [maxIndex, currentIndex])
 
   const goToPrevious = () => {
     setCurrentIndex((prev) => Math.max(0, prev - 1))
@@ -57,25 +84,25 @@ export function AnalyticsVideos() {
   }
 
   return (
-    <section className="py-12 sm:py-16 lg:py-20 bg-muted/30">
+    <section className="py-12 sm:py-16 lg:py-20 bg-muted/30 overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="mb-12 text-center">
-          <h2 className="mb-4 text-3xl font-bold text-foreground sm:text-4xl lg:text-5xl">
+        <div className="mb-8 sm:mb-12 text-center">
+          <h2 className="mb-4 text-2xl font-bold text-foreground sm:text-4xl lg:text-5xl">
             Watch Detailed <span className="text-primary">Analytics Videos</span>
           </h2>
-          <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+          <p className="mx-auto max-w-2xl text-base sm:text-lg text-muted-foreground">
             Learn how to analyze channel performance, understand metrics, and make informed decisions.
           </p>
         </div>
 
         {/* Carousel Container */}
-        <div className="relative">
-          {/* Navigation Buttons */}
+        <div className="relative overflow-visible">
+          {/* Navigation Buttons - Hidden on mobile, use swiping instead */}
           <Button
             variant="outline"
             size="icon"
-            className="absolute left-0 top-1/2 z-10 -translate-x-4 -translate-y-1/2 size-10 rounded-full bg-background shadow-lg hover:bg-primary hover:text-primary-foreground border-border"
+            className="absolute left-0 top-1/2 z-10 -translate-x-4 -translate-y-1/2 size-10 rounded-full bg-background/80 backdrop-blur-sm shadow-md hover:bg-primary hover:text-primary-foreground border-border hidden sm:flex"
             onClick={goToPrevious}
             disabled={currentIndex === 0}
             aria-label="Previous videos"
@@ -86,7 +113,7 @@ export function AnalyticsVideos() {
           <Button
             variant="outline"
             size="icon"
-            className="absolute right-0 top-1/2 z-10 -translate-x-[-1rem] -translate-y-1/2 size-10 rounded-full bg-background shadow-lg hover:bg-primary hover:text-primary-foreground border-border"
+            className="absolute right-0 top-1/2 z-10 translate-x-4 -translate-y-1/2 size-10 rounded-full bg-background/80 backdrop-blur-sm shadow-md hover:bg-primary hover:text-primary-foreground border-border hidden sm:flex"
             onClick={goToNext}
             disabled={currentIndex >= maxIndex}
             aria-label="Next videos"
@@ -94,63 +121,77 @@ export function AnalyticsVideos() {
             <ChevronRight className="size-5" />
           </Button>
 
-          {/* Carousel */}
-          <div className="overflow-hidden">
-            <div
-              className="flex gap-6 transition-transform duration-500 ease-in-out"
-              style={{
-                transform: `translateX(calc(-${currentIndex * (100 / 3)}% - ${currentIndex * 1.5}rem))`,
-              }}
-            >
-              {videos.map((video) => (
-                <div
-                  key={video.id}
-                  className="flex-shrink-0"
-                  style={{ width: "calc(33.333% - 1rem)" }}
-                >
-                  <a
-                    href={`https://www.youtube.com/watch?v=${video.videoId}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group block"
+          {/* Carousel Viewport */}
+          <div className="relative px-0">
+            <div className="overflow-visible sm:overflow-hidden">
+              <motion.div
+                className="flex gap-4 sm:gap-6"
+                animate={{
+                  x: `calc(-${currentIndex * (100 / itemsToShow)}% - ${currentIndex * (itemsToShow === 1 ? 0 : 1.5)}rem)`,
+                }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                onDragEnd={(_, info) => {
+                  const threshold = 50
+                  if (info.offset.x < -threshold && currentIndex < maxIndex) {
+                    goToNext()
+                  } else if (info.offset.x > threshold && currentIndex > 0) {
+                    goToPrevious()
+                  }
+                }}
+              >
+                {videos.map((video) => (
+                  <div
+                    key={video.id}
+                    className="flex-shrink-0"
+                    style={{ width: `calc(${100 / itemsToShow}% - ${itemsToShow === 1 ? 0 : (itemsToShow - 1) * 1.5 / itemsToShow}rem)` }}
                   >
-                    <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-muted transition-all duration-300 group-hover:shadow-xl">
-                      <img
-                        src={video.thumbnail}
-                        alt={video.title}
-                        className="h-full w-full object-cover"
-                      />
-                      {/* Play Button Overlay */}
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/30 transition-all duration-300 group-hover:bg-black/50">
-                        <div className="flex size-20 items-center justify-center rounded-full bg-primary backdrop-blur-sm transition-all duration-300 group-hover:scale-110 group-hover:bg-primary/90 shadow-2xl">
-                          <svg
-                            className="ml-1 size-8 text-primary-foreground"
-                            fill="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path d="M8 5v14l11-7z" stroke="currentColor" strokeWidth="0.5" />
-                          </svg>
+                    <a
+                      href={`https://www.youtube.com/watch?v=${video.videoId}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group block"
+                    >
+                      <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-muted transition-all duration-300 group-hover:shadow-2xl group-hover:shadow-primary/20">
+                        <img
+                          src={video.thumbnail}
+                          alt={video.title}
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                        {/* Play Button Overlay */}
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/20 transition-all duration-300 group-hover:bg-black/40">
+                          <div className="flex size-12 sm:size-16 lg:size-20 items-center justify-center rounded-full bg-primary/95 text-white shadow-xl transition-all duration-300 group-hover:scale-110 group-hover:bg-primary">
+                            <svg
+                              className="ml-1 size-6 sm:size-8 lg:size-10"
+                              fill="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path d="M8 5v14l11-7z" />
+                            </svg>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </a>
-                </div>
-              ))}
+                      <h3 className="mt-3 text-sm font-semibold text-foreground line-clamp-1 sm:text-base group-hover:text-primary transition-colors">
+                        {video.title}
+                      </h3>
+                    </a>
+                  </div>
+                ))}
+              </motion.div>
             </div>
           </div>
 
           {/* Carousel Indicators */}
-          <div className="mt-8 flex justify-center gap-2">
+          <div className="mt-6 sm:mt-10 flex justify-center gap-1.5 sm:gap-2">
             {Array.from({ length: maxIndex + 1 }).map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentIndex(index)}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  index === currentIndex
-                    ? "w-8 bg-primary"
-                    : "w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50"
-                }`}
+                className={`h-1.5 sm:h-2 rounded-full transition-all duration-300 ${index === currentIndex
+                    ? "w-6 sm:w-10 bg-primary"
+                    : "w-1.5 sm:w-2 bg-muted-foreground/20 hover:bg-muted-foreground/40"
+                  }`}
                 aria-label={`Go to slide ${index + 1}`}
               />
             ))}
@@ -160,4 +201,3 @@ export function AnalyticsVideos() {
     </section>
   )
 }
-
