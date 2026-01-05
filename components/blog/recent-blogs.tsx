@@ -41,6 +41,7 @@ export function RecentBlogs({ posts }: RecentBlogsProps) {
                                         alt={post.title}
                                         fill
                                         className="object-cover transition-transform duration-300 group-hover:scale-110"
+                                        unoptimized={post.image?.startsWith("/uploads/")}
                                     />
                                 </div>
                                 <div className="flex flex-col justify-center space-y-1">

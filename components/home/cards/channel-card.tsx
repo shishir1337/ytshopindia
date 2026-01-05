@@ -95,6 +95,7 @@ export function ChannelCard({
             alt={title}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-110"
+            unoptimized={imageUrl.startsWith("/uploads/")}
           />
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />

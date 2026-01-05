@@ -90,6 +90,7 @@ export function ImageCarousel({ images, title }: ImageCarouselProps) {
                             fill
                             className="object-cover"
                             priority
+                            unoptimized={images[currentIndex].startsWith("/uploads/")}
                         />
                     </motion.div>
                 </AnimatePresence>

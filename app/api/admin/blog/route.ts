@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 
 // GET - List all blog posts
 export async function GET(request: Request) {
@@ -92,6 +93,12 @@ export async function POST(request: Request) {
         publishedAt: published === true ? new Date() : null,
       },
     });
+
+    // Revalidate paths to show fresh content if published
+    if (post.published) {
+      revalidatePath("/");
+      revalidatePath("/blog");
+    }
 
     return NextResponse.json({ post }, { status: 201 });
   } catch (error: any) {

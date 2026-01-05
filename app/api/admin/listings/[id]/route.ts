@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 import { sendListingApprovedSellerNotification } from "@/lib/email";
 
 // GET - Get single listing
@@ -69,7 +70,7 @@ export async function PATCH(
     // If status is being changed to approved, set approvedAt and approvedBy
     const updateData: any = { ...body };
     const isBeingApproved = body.status === "approved" && existingListing.status !== "approved";
-    
+
     if (isBeingApproved) {
       updateData.approvedAt = new Date();
       updateData.approvedBy = session.user.id;
@@ -88,7 +89,7 @@ export async function PATCH(
     // Send email notification to seller if listing was just approved (non-blocking)
     if (isBeingApproved) {
       const listingUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/listings/${listing.id}`;
-      
+
       sendListingApprovedSellerNotification({
         listingTitle: listing.title,
         sellerName: listing.sellerName,
@@ -100,6 +101,11 @@ export async function PATCH(
         // Don't fail the request if email fails
       });
     }
+
+    // Revalidate paths to show fresh content
+    revalidatePath("/");
+    revalidatePath("/buy-channel");
+    revalidatePath(`/buy-channel/${listing.id}`);
 
     return NextResponse.json({ listing });
   } catch (error: any) {
@@ -130,6 +136,10 @@ export async function DELETE(
     await prisma.channelListing.delete({
       where: { id },
     });
+
+    // Revalidate paths
+    revalidatePath("/");
+    revalidatePath("/buy-channel");
 
     return NextResponse.json({ success: true });
   } catch (error: any) {

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 
 // GET - Get single blog post
 export async function GET(
@@ -98,6 +99,11 @@ export async function PATCH(
       },
     });
 
+    // Revalidate paths to show fresh content
+    revalidatePath("/");
+    revalidatePath("/blog");
+    revalidatePath(`/blog/${post.slug}`);
+
     return NextResponse.json({ post });
   } catch (error: any) {
     console.error("Error updating blog post:", error);
@@ -127,6 +133,10 @@ export async function DELETE(
     await prisma.blogPost.delete({
       where: { id },
     });
+
+    // Revalidate paths
+    revalidatePath("/");
+    revalidatePath("/blog");
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
