@@ -5,14 +5,29 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useTheme } from "next-themes"
 import * as React from "react"
-import { Menu, X } from "lucide-react"
+import { ChevronDown, Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/mode-toggle"
 import { cn } from "@/lib/utils"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 const navItems = [
   { label: "Home", href: "/" },
   { label: "Buy Channel", href: "/buy-channel" },
+  {
+    label: "How To",
+    href: "#",
+    children: [
+      { label: "Buy Youtube Channel", href: "/blog/how-to-buy-a-youtube-channel" },
+      { label: "Sell Youtube Channel", href: "/blog/how-to-sell-a-youtube-channel" },
+      { label: "Move channel to brand account", href: "/blog/how-to-move-youtube-channel-to-brand-account" },
+    ]
+  },
   { label: "Blog", href: "/blog" },
   { label: "About", href: "/about" },
 ]
@@ -70,18 +85,48 @@ export function Header() {
 
           {/* Center: Navigation Menu - Desktop */}
           <nav className="hidden lg:flex items-center gap-6 xl:gap-8">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "text-sm font-medium transition-colors hover:text-primary",
-                  isActive(item.href) ? "text-primary font-semibold" : "text-foreground"
-                )}
-              >
-                {item.label}
-              </Link>
-            ))}
+            {navItems.map((item) => {
+              if (item.children) {
+                return (
+                  <DropdownMenu key={item.label}>
+                    <DropdownMenuTrigger className={cn(
+                      "flex items-center gap-1 text-sm font-medium transition-colors hover:text-primary outline-none",
+                      item.children.some(child => isActive(child.href)) ? "text-primary font-semibold" : "text-foreground"
+                    )}>
+                      {item.label}
+                      <ChevronDown className="size-4" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="w-56">
+                      {item.children.map((child) => (
+                        <DropdownMenuItem key={child.href} asChild>
+                          <Link
+                            href={child.href}
+                            className={cn(
+                              "w-full cursor-pointer",
+                              isActive(child.href) ? "text-primary font-semibold" : ""
+                            )}
+                          >
+                            {child.label}
+                          </Link>
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )
+              }
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    "text-sm font-medium transition-colors hover:text-primary",
+                    isActive(item.href) ? "text-primary font-semibold" : "text-foreground"
+                  )}
+                >
+                  {item.label}
+                </Link>
+              )
+            })}
           </nav>
 
           {/* Right: Actions - Desktop */}
@@ -148,19 +193,47 @@ export function Header() {
             <div className="flex-1 overflow-y-auto px-4 py-6">
               {/* Mobile Navigation Links */}
               <nav className="flex flex-col space-y-1">
-                {navItems.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={cn(
-                      "text-base font-medium transition-colors hover:text-primary hover:bg-accent py-3 px-4 rounded-md",
-                      isActive(item.href) ? "text-primary bg-primary/10" : "text-foreground"
-                    )}
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    {item.label}
-                  </Link>
-                ))}
+                {navItems.map((item) => {
+                  if (item.children) {
+                    const isAnyChildActive = item.children.some(child => isActive(child.href))
+                    return (
+                      <div key={item.label} className="flex flex-col space-y-1">
+                        <div className={cn(
+                          "text-base font-semibold py-3 px-4 text-muted-foreground uppercase tracking-wider text-xs",
+                          isAnyChildActive ? "text-primary" : ""
+                        )}>
+                          {item.label}
+                        </div>
+                        {item.children.map((child) => (
+                          <Link
+                            key={child.href}
+                            href={child.href}
+                            className={cn(
+                              "text-base font-medium transition-colors hover:text-primary hover:bg-accent py-3 px-8 rounded-md",
+                              isActive(child.href) ? "text-primary bg-primary/10" : "text-foreground"
+                            )}
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            {child.label}
+                          </Link>
+                        ))}
+                      </div>
+                    )
+                  }
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={cn(
+                        "text-base font-medium transition-colors hover:text-primary hover:bg-accent py-3 px-4 rounded-md",
+                        isActive(item.href) ? "text-primary bg-primary/10" : "text-foreground"
+                      )}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {item.label}
+                    </Link>
+                  )
+                })}
               </nav>
 
               {/* Mobile Sell Channel Button */}

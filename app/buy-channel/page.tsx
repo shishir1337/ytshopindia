@@ -17,26 +17,22 @@ export default function BuyChannelPage({
     return (
         <main className="min-h-screen bg-background">
             {/* Page Header */}
-            <section className="relative py-12 sm:py-16 lg:py-20 bg-muted overflow-hidden">
-                <div className="absolute inset-0 -z-10">
-                    <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
-                    <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
-                </div>
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="mx-auto max-w-4xl text-center">
-                        <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-2 text-sm font-medium text-primary">
-                            <ShoppingBag className="size-4" />
-                            <span>Browse Our Marketplace</span>
-                        </div>
-                        <h1 className="mb-6 text-4xl font-bold text-foreground sm:text-5xl lg:text-6xl">
-                            Buy <span className="text-primary">YouTube Channels</span>
-                        </h1>
-                        <p className="text-base leading-relaxed text-muted-foreground sm:text-lg max-w-3xl mx-auto">
-                            Explore our curated collection of verified YouTube channels. Use filters to find the perfect channel
-                            that matches your requirements and budget.
-                        </p>
+            <section className="relative py-20 bg-muted/30 border-b overflow-hidden">
+                <div className="container px-4 mx-auto text-center relative z-10">
+                    <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-2 text-sm font-medium text-primary">
+                        <ShoppingBag className="size-4" />
+                        <span>Browse Our Marketplace</span>
                     </div>
+                    <h1 className="mb-6 text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight">
+                        Buy <span className="text-primary">YouTube Channels</span>
+                    </h1>
+                    <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+                        Explore our curated collection of verified YouTube channels. Use filters to find the perfect channel
+                        that matches your requirements and budget.
+                    </p>
                 </div>
+                {/* Decorative background element */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl -z-0" />
             </section>
 
             {/* Filters and Listings */}

@@ -12,21 +12,18 @@ export default function SellChannelPage() {
   return (
     <main>
       {/* Page Header */}
-      <section className="relative py-12 sm:py-16 lg:py-20 bg-muted overflow-hidden">
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
+      <section className="relative py-20 bg-muted/30 border-b overflow-hidden">
+        <div className="container px-4 mx-auto text-center relative z-10">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6">
+            Sell Your <span className="text-primary">YouTube Channel</span>
+          </h1>
+          <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            Get the best price for your channel with the most trusted platform.
+            Direct assistance from start to finish.
+          </p>
         </div>
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-4xl text-center">
-            <h1 className="mb-6 text-4xl font-bold text-foreground sm:text-5xl lg:text-6xl">
-              Sell Your YouTube Channel With The <span className="text-primary">Most Trusted Platform</span>
-            </h1>
-            <p className="text-base leading-relaxed text-muted-foreground sm:text-lg max-w-3xl mx-auto">
-              Want to sell your YouTube channel? Our platform offers top-notch services, trusted by thousands of creators, with a straightforward and easy process to sell your YouTube channel. Our team of experts provide support from start to finish, including negotiating the best price and ensuring a secure transaction. With our platform, you can sell your channel in the best possible way and get the most out of your YouTube channel.
-            </p>
-          </div>
-        </div>
+        {/* Decorative background element */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl -z-0" />
       </section>
 
       {/* Quick Info Cards */}

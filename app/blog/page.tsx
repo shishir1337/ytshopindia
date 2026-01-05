@@ -70,18 +70,18 @@ export default async function BlogPage({
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="border-b border-border bg-gradient-to-b from-muted/30 to-background py-16 sm:py-20 lg:py-24">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center">
-            <h1 className="mb-4 text-4xl font-bold text-foreground sm:text-5xl lg:text-6xl">
-              Our <span className="text-primary">Blog</span>
-            </h1>
-            <p className="mx-auto max-w-2xl text-lg text-muted-foreground sm:text-xl">
-              Stay updated with the latest insights, tips, and guides on buying
-              and selling YouTube channels.
-            </p>
-          </div>
+      <section className="relative py-20 bg-muted/30 border-b overflow-hidden">
+        <div className="container px-4 mx-auto text-center relative z-10">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6">
+            Our <span className="text-primary">Blog</span>
+          </h1>
+          <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            Stay updated with the latest insights, tips, and guides on buying
+            and selling YouTube channels.
+          </p>
         </div>
+        {/* Decorative background element */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl -z-0" />
       </section>
 
       {/* Blog Posts Grid */}
