@@ -117,27 +117,27 @@ export function ListingsTable({ listings, onStatusChange }: ListingsTableProps) 
     switch (status) {
       case "approved":
         return (
-          <Badge variant="default" className="bg-green-600">
+          <Badge variant="outline" className="text-[#16A34A] bg-[#DCFCE7] border-none hover:bg-[#DCFCE7]/80">
             <CheckCircle2 className="mr-1 size-3" />
             Approved
           </Badge>
         );
       case "pending":
         return (
-          <Badge variant="secondary">
+          <Badge variant="outline" className="text-[#F59E0B] bg-[#FEF3C7] border-none hover:bg-[#FEF3C7]/80">
             <Clock className="mr-1 size-3" />
             Pending
           </Badge>
         );
       case "sold":
         return (
-          <Badge variant="default" className="bg-blue-600">
+          <Badge variant="outline" className="text-[#2563EB] bg-[#DBEAFE] border-none hover:bg-[#DBEAFE]/80">
             Sold
           </Badge>
         );
       case "rejected":
         return (
-          <Badge variant="destructive">
+          <Badge variant="outline" className="text-[#DC2626] bg-[#FEE2E2] border-none hover:bg-[#FEE2E2]/80">
             <XCircle className="mr-1 size-3" />
             Rejected
           </Badge>
@@ -176,13 +176,13 @@ export function ListingsTable({ listings, onStatusChange }: ListingsTableProps) 
               <TableHead className="text-right min-w-[140px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
-        <TableBody>
-          {listings.map((listing) => {
-            const currentStatus = getListingStatus(listing);
-            const isUpdating = optimisticUpdates[listing.id] !== undefined;
+          <TableBody>
+            {listings.map((listing) => {
+              const currentStatus = getListingStatus(listing);
+              const isUpdating = optimisticUpdates[listing.id] !== undefined;
 
-            return (
-              <TableRow key={listing.id} className={isUpdating ? "opacity-60" : ""}>
+              return (
+                <TableRow key={listing.id} className={isUpdating ? "opacity-60" : ""}>
                   <TableCell>
                     <div className="font-medium text-foreground">
                       {listing.title}
@@ -223,49 +223,49 @@ export function ListingsTable({ listings, onStatusChange }: ListingsTableProps) 
                     {formatDate(listing.createdAt)}
                   </TableCell>
                   <TableCell className="text-right">
-                  <div className="flex items-center justify-end gap-2">
-                    {currentStatus === "pending" ? (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleStatusChange(listing.id, "approved")}
-                        disabled={isPending}
-                        className="text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-950"
-                      >
-                        <CheckCircle2 className="mr-1.5 size-4" />
-                        Approve
+                    <div className="flex items-center justify-end gap-2">
+                      {currentStatus === "pending" ? (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleStatusChange(listing.id, "approved")}
+                          disabled={isPending}
+                          className="text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-950"
+                        >
+                          <CheckCircle2 className="mr-1.5 size-4" />
+                          Approve
+                        </Button>
+                      ) : currentStatus === "approved" ? (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleStatusChange(listing.id, "pending")}
+                          disabled={isPending}
+                          className="text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-950"
+                        >
+                          <Ban className="mr-1.5 size-4" />
+                          Unapprove
+                        </Button>
+                      ) : null}
+                      <Button variant="ghost" size="icon" asChild>
+                        <Link href={`/admin/listings/${listing.id}/edit`}>
+                          <Edit className="size-4" />
+                        </Link>
                       </Button>
-                    ) : currentStatus === "approved" ? (
                       <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleStatusChange(listing.id, "pending")}
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDelete(listing.id, listing.title)}
                         disabled={isPending}
-                        className="text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-950"
                       >
-                        <Ban className="mr-1.5 size-4" />
-                        Unapprove
+                        <Trash2 className="size-4 text-destructive" />
                       </Button>
-                    ) : null}
-                    <Button variant="ghost" size="icon" asChild>
-                      <Link href={`/admin/listings/${listing.id}/edit`}>
-                        <Edit className="size-4" />
-                      </Link>
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDelete(listing.id, listing.title)}
-                      disabled={isPending}
-                    >
-                      <Trash2 className="size-4 text-destructive" />
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
         </Table>
       </div>
     </div>

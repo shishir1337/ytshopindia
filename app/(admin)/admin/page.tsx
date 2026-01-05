@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import { getDashboardData } from "./lib/get-dashboard-data";
 
 function formatDate(date: Date) {
@@ -130,26 +131,24 @@ export default async function AdminDashboardPage() {
                   </p>
                 </div>
                 <div
-                  className={`flex-shrink-0 rounded-lg p-2.5 sm:p-3 ${
-                    stat.color === "blue"
-                      ? "bg-blue-500/10"
-                      : stat.color === "purple"
+                  className={`flex-shrink-0 rounded-lg p-2.5 sm:p-3 ${stat.color === "blue"
+                    ? "bg-blue-500/10"
+                    : stat.color === "purple"
                       ? "bg-purple-500/10"
                       : stat.color === "emerald"
-                      ? "bg-emerald-500/10"
-                      : "bg-amber-500/10"
-                  }`}
+                        ? "bg-emerald-500/10"
+                        : "bg-amber-500/10"
+                    }`}
                 >
                   <Icon
-                    className={`size-5 sm:size-6 ${
-                      stat.color === "blue"
-                        ? "text-blue-600"
-                        : stat.color === "purple"
+                    className={`size-5 sm:size-6 ${stat.color === "blue"
+                      ? "text-blue-600"
+                      : stat.color === "purple"
                         ? "text-purple-600"
                         : stat.color === "emerald"
-                        ? "text-emerald-600"
-                        : "text-amber-600"
-                    }`}
+                          ? "text-emerald-600"
+                          : "text-amber-600"
+                      }`}
                   />
                 </div>
               </div>
@@ -205,14 +204,14 @@ export default async function AdminDashboardPage() {
                           {listing.title}
                         </h3>
                         <Badge
-                          variant={
-                            listing.status === "approved"
-                              ? "default"
-                              : listing.status === "pending"
-                              ? "secondary"
-                              : "destructive"
-                          }
-                          className="text-xs flex-shrink-0"
+                          variant="outline"
+                          className={cn(
+                            "text-xs flex-shrink-0 border-none",
+                            listing.status === "approved" && "text-[#16A34A] bg-[#DCFCE7]",
+                            listing.status === "pending" && "text-[#F59E0B] bg-[#FEF3C7]",
+                            listing.status === "sold" && "text-[#2563EB] bg-[#DBEAFE]",
+                            listing.status === "rejected" && "text-[#DC2626] bg-[#FEE2E2]"
+                          )}
                         >
                           {listing.status}
                         </Badge>

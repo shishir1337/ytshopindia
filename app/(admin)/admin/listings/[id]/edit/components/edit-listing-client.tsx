@@ -18,6 +18,7 @@ import {
 import { ImageUpload } from "@/components/admin/image-upload";
 import { MultipleImageUpload } from "@/components/admin/multiple-image-upload";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 interface ListingData {
   id: string;
@@ -82,11 +83,11 @@ export function EditListingClient({ listing: initialListing }: EditListingClient
   const [saving, setSaving] = useState(false);
   const [fetchingYoutube, setFetchingYoutube] = useState(false);
   const [isPending, startTransition] = useTransition();
-  
+
   // Extract monetization status from description
   const extractedMonetizationStatus = extractMonetizationStatus(initialListing.description);
   const cleanDescription = removeMonetizationStatusFromDescription(initialListing.description);
-  
+
   const [formData, setFormData] = useState({
     title: initialListing.title || "",
     description: cleanDescription,
@@ -138,13 +139,13 @@ export function EditListingClient({ listing: initialListing }: EditListingClient
           ? `${finalDescription}\n\nMonetization Status: ${formData.monetizationStatus}`
           : `Monetization Status: ${formData.monetizationStatus}`;
       }
-      
+
       // Set monetized boolean based on monetization status
       const monetized = formData.monetizationStatus.toLowerCase() === "monetized";
-      
+
       // Exclude monetizationStatus from submitData (it's only for UI)
       const { monetizationStatus, ...restFormData } = formData;
-      
+
       const submitData = {
         ...restFormData,
         description: finalDescription,
@@ -307,14 +308,14 @@ export function EditListingClient({ listing: initialListing }: EditListingClient
       {/* Status Badge */}
       <div>
         <Badge
-          variant={
-            formData.status === "approved"
-              ? "default"
-              : formData.status === "pending"
-              ? "secondary"
-              : "destructive"
-          }
-          className={formData.status === "approved" ? "bg-green-600" : ""}
+          variant="outline"
+          className={cn(
+            "border-none",
+            formData.status === "approved" && "text-[#16A34A] bg-[#DCFCE7]",
+            formData.status === "pending" && "text-[#F59E0B] bg-[#FEF3C7]",
+            formData.status === "sold" && "text-[#2563EB] bg-[#DBEAFE]",
+            formData.status === "rejected" && "text-[#DC2626] bg-[#FEE2E2]"
+          )}
         >
           Status: {formData.status.toUpperCase()}
         </Badge>
