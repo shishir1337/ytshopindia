@@ -10,8 +10,7 @@ export const metadata: Metadata = {
     description: "Learn more about YTShop India, the premier marketplace for buying and selling YouTube channels in India.",
 }
 
-const ADMIN_WHATSAPP = "+919101782780"
-const WHATSAPP_URL = `https://wa.me/${ADMIN_WHATSAPP.replace(/[^0-9]/g, "")}`
+import { getSiteSettings } from "../(admin)/admin/settings/actions"
 
 const stats = [
     { label: "Trust Creators", value: "2000+", icon: Users },
@@ -19,7 +18,10 @@ const stats = [
     { label: "Expert Support", value: "24/7", icon: CheckCircle2 },
 ]
 
-export default function AboutPage() {
+export default async function AboutPage() {
+    const siteSettings = await getSiteSettings()
+    const WHATSAPP_URL = `https://wa.me/${siteSettings.adminWhatsapp.replace(/[^0-9]/g, "")}`
+
     return (
         <div className="flex flex-col min-h-screen">
             {/* Hero Section */}

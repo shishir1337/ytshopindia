@@ -167,3 +167,13 @@ model ChannelListing {
   @@index([createdAt])
   @@map("channel_listings")
 }
+model SiteSetting {
+  id             String   @id @default("singleton")
+  adminWhatsapp  String   @default("+919101782780")
+  siteTitle      String   @default("YTShop India")
+  siteDescription String?  @default("Premier marketplace for buying and selling YouTube channels")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("site_settings")
+}
