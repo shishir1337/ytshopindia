@@ -1,3 +1,6 @@
+import { Plus } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { ListingsClient } from "./components/listings-client";
 import { getListings } from "./lib/get-listings";
 
@@ -22,6 +25,12 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
             Manage YouTube channel listings
           </p>
         </div>
+        <Button asChild>
+          <Link href="/admin/listings/new">
+            <Plus className="mr-2 size-4" />
+            Add New Listing
+          </Link>
+        </Button>
       </div>
 
       <ListingsClient initialListings={listings} initialStatus={status} />
