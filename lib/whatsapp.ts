@@ -25,7 +25,7 @@ export async function sendWhatsAppNotification(
 ) {
   try {
     // Format the message as requested
-    const message = `Name: ${data.sellerName}, Whats Number: ${data.sellerWhatsapp}, Channel Link: ${data.channelLink || "N/A"}, Monetization Status: ${data.monetizationStatus}, Your Email: ${data.sellerEmail}, Expected price: ${data.expectedPrice || "N/A"} ${data.currency || "₹"}`;
+    const message = `Name: ${data.sellerName}, Whatsapp Number: ${data.sellerWhatsapp}, Channel Link: ${data.channelLink || "N/A"}, Monetization Status: ${data.monetizationStatus}, Your Email: ${data.sellerEmail}, Expected price: ${data.expectedPrice || "N/A"} ${data.currency || "₹"}`;
 
     // Clean phone number (remove + and spaces)
     const cleanPhoneNumber = ADMIN_WHATSAPP.replace(/[^0-9]/g, "");
@@ -52,11 +52,11 @@ export async function sendWhatsAppNotification(
 
     // For now, return success with the formatted message and URL
     // You can use this URL to manually send, or integrate with a WhatsApp API
-    return { 
-      success: true, 
-      message, 
+    return {
+      success: true,
+      message,
       url: whatsappUrl,
-      to: ADMIN_WHATSAPP 
+      to: ADMIN_WHATSAPP
     };
   } catch (error) {
     console.error("Error sending WhatsApp notification:", error);

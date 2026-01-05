@@ -7,20 +7,37 @@ import { Button } from "@/components/ui/button"
 
 interface ChannelCardProps {
   id: string
-  channelImage: string
+  channelImage?: string | null
   title: string
-  subscribers: number
-  monetized: "Monetized" | "Non-Monetized" | "Demonetized"
-  description: string
+  subscribers?: string | null
+  monetized?: boolean | null
+  description?: string | null
 }
 
 export function ChannelCard({
+  id,
   channelImage,
   title,
   subscribers,
   monetized,
   description,
 }: ChannelCardProps) {
+  // Parse subscribers string to number for formatting
+  const parseSubscribers = (subs: string | null | undefined): number => {
+    if (!subs) return 0
+    // Remove any non-numeric characters except for decimal points
+    const cleaned = subs.replace(/[^0-9.]/g, "")
+    const num = parseFloat(cleaned)
+    // Check if original string had K or M suffix
+    if (subs.toLowerCase().includes("m")) {
+      return num * 1000000
+    }
+    if (subs.toLowerCase().includes("k")) {
+      return num * 1000
+    }
+    return isNaN(num) ? 0 : num
+  }
+
   const formatSubscribers = (count: number): string => {
     if (count >= 1000000) {
       return `${(count / 1000000).toFixed(1)}M`
@@ -30,6 +47,15 @@ export function ChannelCard({
     }
     return count.toString()
   }
+
+  const subscriberCount = parseSubscribers(subscribers)
+
+  // Get monetization status label
+  const getMonetizationLabel = (isMonetized: boolean | null | undefined): "Monetized" | "Non-Monetized" => {
+    return isMonetized ? "Monetized" : "Non-Monetized"
+  }
+
+  const monetizationLabel = getMonetizationLabel(monetized)
 
   const getMonetizedStatusColor = (status: string) => {
     switch (status) {
@@ -56,38 +82,43 @@ export function ChannelCard({
     }
   }
 
+  // Default placeholder image if none provided
+  const imageUrl = channelImage || "/placeholder-channel.jpg"
+
   return (
-    <Link href={`/buy-channel/${title.toLowerCase().replace(/\s+/g, "-")}`}>
+    <Link href={`/buy-channel/${id}`}>
       <div className="group relative overflow-hidden rounded-xl border border-border bg-card transition-all duration-300 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5">
         {/* Channel Image with Overlay */}
         <div className="relative aspect-video w-full overflow-hidden bg-muted">
           <Image
-            src={channelImage}
+            src={imageUrl}
             alt={title}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-110"
           />
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-          
+
           {/* Monetization Badge on Image */}
           <div className="absolute top-3 left-3">
             <div
-              className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold backdrop-blur-sm ${getMonetizedStatusColor(monetized)}`}
+              className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold backdrop-blur-sm ${getMonetizedStatusColor(monetizationLabel)}`}
             >
-              {getMonetizedIcon(monetized)}
-              <span>{monetized}</span>
+              {getMonetizedIcon(monetizationLabel)}
+              <span>{monetizationLabel}</span>
             </div>
           </div>
 
           {/* Subscriber Count Badge on Image */}
-          <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-            <div className="flex items-center gap-2 rounded-lg bg-black/70 backdrop-blur-sm px-3 py-2">
-              <Users className="size-4 text-white" />
-              <span className="text-sm font-bold text-white">{formatSubscribers(subscribers)}</span>
-              <span className="text-xs text-white/80">Subscribers</span>
+          {subscriberCount > 0 && (
+            <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+              <div className="flex items-center gap-2 rounded-lg bg-black/70 backdrop-blur-sm px-3 py-2">
+                <Users className="size-4 text-white" />
+                <span className="text-sm font-bold text-white">{formatSubscribers(subscriberCount)}</span>
+                <span className="text-xs text-white/80">Subscribers</span>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Card Content */}
@@ -97,9 +128,11 @@ export function ChannelCard({
             <h3 className="line-clamp-2 text-xl font-bold text-foreground group-hover:text-primary transition-colors mb-2">
               {title}
             </h3>
-            <p className="line-clamp-2 text-sm text-muted-foreground leading-relaxed">
-              {description}
-            </p>
+            {description && (
+              <p className="line-clamp-2 text-sm text-muted-foreground leading-relaxed">
+                {description}
+              </p>
+            )}
           </div>
 
           {/* Stats Section */}
@@ -110,7 +143,9 @@ export function ChannelCard({
               </div>
               <div className="flex flex-col">
                 <span className="text-xs font-medium text-muted-foreground">Subscribers</span>
-                <span className="text-lg font-bold text-foreground">{formatSubscribers(subscribers)}</span>
+                <span className="text-lg font-bold text-foreground">
+                  {subscriberCount > 0 ? formatSubscribers(subscriberCount) : "N/A"}
+                </span>
               </div>
             </div>
 
