@@ -15,7 +15,7 @@ const features = [
   },
   {
     icon: Users,
-    title: "Verified Sellers",
+    title: "Verified Listings",
     description: "All channels are verified for authenticity. We ensure genuine metrics and active communities.",
   },
   {
@@ -26,7 +26,7 @@ const features = [
   {
     icon: CheckCircle2,
     title: "Easy Process",
-    description: "Simple listing and buying process. From discovery to ownership in just a few steps.",
+    description: "Simple selling and buying process. From discovery to ownership in just a few steps.",
   },
   {
     icon: Headphones,
@@ -53,7 +53,7 @@ export function WhyYtShop() {
             ?
           </h2>
           <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-            India&apos;s most trusted platform for buying and selling YouTube channels. 
+            India&apos;s most trusted platform for buying and selling YouTube channels.
             Experience seamless transactions with verified listings and dedicated support.
           </p>
         </div>
@@ -104,7 +104,7 @@ export function WhyYtShop() {
             </Button>
             <Button asChild size="lg" variant="outline" className="group">
               <Link href="/sell-channel">
-                List Your Channel
+                Sell Your Channel
                 <ArrowRight className="ml-2 size-5 transition-transform group-hover:translate-x-1" />
               </Link>
             </Button>

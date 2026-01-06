@@ -28,7 +28,7 @@ export function Hero() {
 
           {/* Description */}
           <p className="mb-8 text-base text-muted-foreground sm:text-lg max-w-2xl mx-auto leading-relaxed">
-            Connect with creators, grow your digital presence, and monetize your YouTube journey. 
+            Connect with creators, grow your digital presence, and monetize your YouTube journey.
             Trusted marketplace for buying and selling YouTube channels in India.
           </p>
 
@@ -55,9 +55,9 @@ export function Hero() {
                 <Users className="size-6" />
               </div>
               <div className="text-2xl font-bold text-foreground">
-                <AnimatedCounter value={1000} duration={2000} suffix="+" />
+                <AnimatedCounter value={2000} duration={2000} suffix="+" />
               </div>
-              <div className="text-sm text-muted-foreground">Active Channels</div>
+              <div className="text-sm text-muted-foreground">Deal Completed</div>
             </div>
             <div className="flex flex-col items-center">
               <div className="mb-2 flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary">
@@ -73,9 +73,9 @@ export function Hero() {
                 <TrendingUp className="size-6" />
               </div>
               <div className="text-2xl font-bold text-foreground">
-                <AnimatedCounter value={98} duration={2000} suffix="%" />
+                <AnimatedCounter value={100} duration={2000} suffix="%" />
               </div>
-              <div className="text-sm text-muted-foreground">Success Rate</div>
+              <div className="text-sm text-muted-foreground">Satisfaction Rate</div>
             </div>
           </div>
         </div>
