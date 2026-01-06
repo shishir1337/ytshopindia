@@ -1,8 +1,8 @@
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
-    title: "Privacy Policy | YTShop India",
-    description: "Privacy Policy for YTShop India services.",
+    title: "Privacy Policy | YT Shop India",
+    description: "Privacy Policy for YT Shop India services.",
 }
 
 export default function PrivacyPage() {

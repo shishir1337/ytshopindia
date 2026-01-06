@@ -75,7 +75,7 @@ export function Header() {
           <Link href="/" className="flex items-center z-50">
             <Image
               src={logoSrc}
-              alt="YTShop India Logo"
+              alt="YT Shop India Logo"
               width={120}
               height={40}
               className="h-8 w-auto sm:h-10"

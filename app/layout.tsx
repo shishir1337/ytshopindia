@@ -18,8 +18,8 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
   title: {
-    default: "YTShop India - YouTube Channel Marketplace",
-    template: "%s | YTShop India",
+    default: "YT Shop India - YouTube Channel Marketplace",
+    template: "%s | YT Shop India",
   },
   description: "A stunning YouTube channel listing marketplace - Buy and sell YouTube channels with ease and security.",
   keywords: ["YouTube channel", "buy YouTube channel", "sell YouTube channel", "YT marketplace", "India"],
@@ -27,11 +27,11 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_IN",
     url: "https://ytshopindia.com",
-    siteName: "YTShop India",
+    siteName: "YT Shop India",
   },
   twitter: {
     card: "summary_large_image",
-    title: "YTShop India - YouTube Channel Marketplace",
+    title: "YT Shop India - YouTube Channel Marketplace",
     description: "Buy and sell YouTube channels with ease and security.",
   },
 }

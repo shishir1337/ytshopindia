@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Blog - YTShop India",
+  title: "Blog - YT Shop India",
   description: "Latest insights, tips, and guides on buying and selling YouTube channels",
 };
 

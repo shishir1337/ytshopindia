@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 
 export const metadata: Metadata = {
-    title: "About Us | YTShop India",
-    description: "Learn more about YTShop India, the premier marketplace for buying and selling YouTube channels in India.",
+    title: "About Us | YT Shop India",
+    description: "Learn more about YT Shop India, the premier marketplace for buying and selling YouTube channels in India.",
 }
 
 import { getSiteSettings } from "../(admin)/admin/settings/actions"
@@ -28,10 +28,10 @@ export default async function AboutPage() {
             <section className="relative py-20 bg-muted/30 border-b overflow-hidden">
                 <div className="container px-4 mx-auto text-center relative z-10">
                     <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6">
-                        About <span className="text-primary">YTShop India</span>
+                        About <span className="text-primary">YT Shop India</span>
                     </h1>
                     <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-                        Bridging the Gap between You and YouTube Success with YTShop India
+                        Bridging the Gap between You and YouTube Success with YT Shop India
                     </p>
                 </div>
                 {/* Decorative background element */}
@@ -57,12 +57,12 @@ export default async function AboutPage() {
                             </p>
                             <div className="space-y-4">
                                 <p className="text-muted-foreground">
-                                    YTShop India is a one-stop-shop for all your YouTube channel needs. We understand the value of
+                                    YT Shop India is a one-stop-shop for all your YouTube channel needs. We understand the value of
                                     your time and effort, and that's why we strive to make the process of buying and selling YouTube
                                     channels as smooth and seamless as possible.
                                 </p>
                                 <p className="text-muted-foreground">
-                                    With a team of experts and a passion for delivering excellence, YTShop India is the platform
+                                    With a team of experts and a passion for delivering excellence, YT Shop India is the platform
                                     you can trust to take the next step in your digital career.
                                 </p>
                             </div>
@@ -116,7 +116,7 @@ export default async function AboutPage() {
                     <h2 className="text-3xl font-bold mb-6">Ready to Scale Your Presence?</h2>
                     <p className="text-lg text-muted-foreground mb-10 leading-relaxed">
                         We are passionate about helping creators reach their goals and we look forward to working with you.
-                        Join the YTShop India community today and take the first step towards growing your YouTube channel.
+                        Join the YT Shop India community today and take the first step towards growing your YouTube channel.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <Button size="lg" asChild>

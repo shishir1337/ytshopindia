@@ -61,7 +61,7 @@ export function Footer() {
             <Link href="/" className="inline-block">
               <Image
                 src={logoSrc}
-                alt="YTShop India Logo"
+                alt="YT Shop India Logo"
                 width={150}
                 height={50}
                 className="h-10 w-auto mb-4"
@@ -69,10 +69,10 @@ export function Footer() {
               />
             </Link>
             <p className="text-sm text-muted-foreground max-w-sm">
-              Your trusted marketplace for buying and selling YouTube channels. 
+              Your trusted marketplace for buying and selling YouTube channels.
               Connect with creators and grow your digital presence.
             </p>
-            
+
             {/* Follow Us */}
             <div className="space-y-2 pt-2">
               <h3 className="text-sm font-semibold text-foreground">Follow Us</h3>
@@ -153,7 +153,7 @@ export function Footer() {
                 </a>
               </li>
             </ul>
-            
+
             <div className="pt-4 border-t border-t-primary/20">
               <h3 className="text-sm font-semibold text-foreground mb-2">Legal</h3>
               <ul className="space-y-2">
@@ -176,7 +176,7 @@ export function Footer() {
         <div className="border-t border-t-primary/20 py-6">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <p className="text-sm text-muted-foreground text-center sm:text-left">
-              © {new Date().getFullYear()} YTShop India. All rights reserved.
+              © {new Date().getFullYear()} YT Shop India. All rights reserved.
             </p>
             <div className="flex items-center gap-4 text-sm text-muted-foreground">
               <span>Made with ❤️ for creators</span>

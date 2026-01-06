@@ -125,7 +125,7 @@ export function SettingsForm({ user, siteSettings }: SettingsFormProps) {
                 <Card>
                     <CardHeader>
                         <CardTitle>Site Settings</CardTitle>
-                        <CardDescription>Global configuration for YTShop India.</CardDescription>
+                        <CardDescription>Global configuration for YT Shop India.</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleUpdateSite} className="space-y-4">

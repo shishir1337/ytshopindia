@@ -1,8 +1,8 @@
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
-    title: "Terms and Conditions | YTShop India",
-    description: "Terms and Conditions for using YTShop India services.",
+    title: "Terms and Conditions | YT Shop India",
+    description: "Terms and Conditions for using YT Shop India services.",
 }
 
 export default function TermsPage() {
@@ -25,12 +25,12 @@ export default function TermsPage() {
                     <div className="prose prose-lg dark:prose-invert max-w-none">
                         <h2>1. Introduction</h2>
                         <p>
-                            Welcome to YTShop India. By accessing or using our website and services, you agree to be bound by these Terms and Conditions and our Privacy Policy.
+                            Welcome to YT Shop India. By accessing or using our website and services, you agree to be bound by these Terms and Conditions and our Privacy Policy.
                         </p>
 
                         <h2>2. Services</h2>
                         <p>
-                            YTShop India provides a marketplace for buying and selling YouTube channels. We act as an intermediary to facilitate transactions between buyers and sellers.
+                            YT Shop India provides a marketplace for buying and selling YouTube channels. We act as an intermediary to facilitate transactions between buyers and sellers.
                         </p>
 
                         <h2>3. User Responsibilities</h2>
@@ -45,12 +45,12 @@ export default function TermsPage() {
 
                         <h2>5. Intellectual Property</h2>
                         <p>
-                            The content, features, and functionality of YTShop India are owned by us and are protected by international copyright, trademark, and other intellectual property laws.
+                            The content, features, and functionality of YT Shop India are owned by us and are protected by international copyright, trademark, and other intellectual property laws.
                         </p>
 
                         <h2>6. Liability</h2>
                         <p>
-                            YTShop India shall not be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use of the services.
+                            YT Shop India shall not be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use of the services.
                         </p>
 
                         <h2>7. Governing Law</h2>

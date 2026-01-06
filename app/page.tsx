@@ -9,8 +9,8 @@ import { FAQ } from "@/components/home/sections/faq"
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Buy & Sell YouTube Channels | YTShop India Marketplace",
-  description: "YTShop India is the premier marketplace for buying and selling verified YouTube channels. Fast, secure, and trusted by thousands of creators.",
+  title: "Buy & Sell YouTube Channels | YT Shop India Marketplace",
+  description: "YT Shop India is the premier marketplace for buying and selling verified YouTube channels. Fast, secure, and trusted by thousands of creators.",
 }
 
 export default function Home() {

@@ -98,12 +98,12 @@ export async function generateMetadata({
 
   if (!data) {
     return {
-      title: "Post Not Found - YTShop India",
+      title: "Post Not Found - YT Shop India",
     };
   }
 
   return {
-    title: `${data.post.title} - YTShop India Blog`,
+    title: `${data.post.title} - YT Shop India Blog`,
     description: data.post.excerpt,
     openGraph: {
       title: data.post.title,

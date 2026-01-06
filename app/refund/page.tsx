@@ -1,8 +1,8 @@
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
-    title: "Refund Policy | YTShop India",
-    description: "Refund Policy for items purchased through YTShop India.",
+    title: "Refund Policy | YT Shop India",
+    description: "Refund Policy for items purchased through YT Shop India.",
 }
 
 export default function RefundPage() {
