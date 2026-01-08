@@ -2,10 +2,10 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { useTheme } from "next-themes"
 import * as React from "react"
-import { ChevronDown, Menu, X } from "lucide-react"
+import { ChevronDown, Menu, X, LogOut, LayoutDashboard } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/mode-toggle"
 import { cn } from "@/lib/utils"
@@ -13,8 +13,12 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { authClient } from "@/lib/auth-client"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { toast } from "sonner"
 
 const navItems = [
   { label: "Home", href: "/" },
@@ -34,9 +38,11 @@ const navItems = [
 
 export function Header() {
   const pathname = usePathname()
+  const router = useRouter()
   const { theme } = useTheme()
   const [mounted, setMounted] = React.useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false)
+  const { data: session } = authClient.useSession()
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/"
@@ -53,7 +59,7 @@ export function Header() {
   // Close mobile menu when route changes
   React.useEffect(() => {
     setMobileMenuOpen(false)
-  }, [])
+  }, [pathname])
 
   // Prevent body scroll when mobile menu is open
   React.useEffect(() => {
@@ -66,6 +72,18 @@ export function Header() {
       document.body.style.overflow = "unset"
     }
   }, [mobileMenuOpen])
+
+  const handleLogout = async () => {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          toast.success("Logged out successfully")
+          router.replace("/login")
+          router.refresh()
+        },
+      },
+    })
+  }
 
   return (
     <>
@@ -134,6 +152,46 @@ export function Header() {
             <Button variant="default" asChild className="whitespace-nowrap">
               <Link href="/sell-channel">Sell Channel</Link>
             </Button>
+
+            {session ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger className="outline-none">
+                  <Avatar className="size-9 border border-primary/20 transition-transform hover:scale-105">
+                    <AvatarImage src={session.user.image || ""} alt={session.user.name || ""} />
+                    <AvatarFallback className="bg-primary/5 text-primary">
+                      {session.user.name?.charAt(0).toUpperCase() || "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <div className="flex items-center justify-start gap-2 p-2">
+                    <div className="flex flex-col space-y-0.5 leading-none">
+                      <p className="font-medium text-sm">{session.user.name}</p>
+                      <p className="w-[200px] truncate text-xs text-muted-foreground">
+                        {session.user.email}
+                      </p>
+                    </div>
+                  </div>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/dashboard" className="cursor-pointer">
+                      <LayoutDashboard className="mr-2 size-4" />
+                      Dashboard
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive focus:text-destructive">
+                    <LogOut className="mr-2 size-4" />
+                    Log out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button variant="ghost" asChild>
+                <Link href="/login">Sign In</Link>
+              </Button>
+            )}
+
             <ModeToggle />
           </div>
 
@@ -191,6 +249,44 @@ export function Header() {
 
             {/* Menu Content - Scrollable */}
             <div className="flex-1 overflow-y-auto px-4 py-6">
+              {/* Mobile Profile Section */}
+              {session ? (
+                <div className="mb-6 p-4 rounded-lg bg-muted/40 border border-border">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Avatar className="size-10">
+                      <AvatarImage src={session.user.image || ""} alt={session.user.name || ""} />
+                      <AvatarFallback>
+                        {session.user.name?.charAt(0).toUpperCase() || "U"}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="overflow-hidden">
+                      <p className="font-medium truncate">{session.user.name}</p>
+                      <p className="text-xs text-muted-foreground truncate">{session.user.email}</p>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Button variant="outline" size="sm" className="w-full justify-start" asChild>
+                      <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
+                        <LayoutDashboard className="mr-2 size-4" />
+                        Dashboard
+                      </Link>
+                    </Button>
+                    <Button variant="outline" size="sm" className="w-full justify-start text-destructive hover:text-destructive" onClick={handleLogout}>
+                      <LogOut className="mr-2 size-4" />
+                      Log out
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="mb-6">
+                  <Button variant="outline" className="w-full" asChild>
+                    <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
+                      Sign In / Register
+                    </Link>
+                  </Button>
+                </div>
+              )}
+
               {/* Mobile Navigation Links */}
               <nav className="flex flex-col space-y-1">
                 {navItems.map((item) => {

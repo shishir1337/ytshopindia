@@ -10,6 +10,8 @@ import {
   Settings,
   Menu,
   X,
+  User,
+  ShoppingBag,
 } from "lucide-react";
 import { SignOutButton } from "./sign-out-button";
 import { Button } from "@/components/ui/button";
@@ -20,6 +22,11 @@ const navigation = [
     name: "Dashboard",
     href: "/admin",
     icon: LayoutDashboard,
+  },
+  {
+    name: "Orders",
+    href: "/admin/orders",
+    icon: ShoppingBag,
   },
   {
     name: "Blog",
@@ -35,6 +42,11 @@ const navigation = [
     name: "Settings",
     href: "/admin/settings",
     icon: Settings,
+  },
+  {
+    name: "Users",
+    href: "/admin/users",
+    icon: User,
   },
 ];
 

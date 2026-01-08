@@ -12,6 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { RichTextEditor } from "@/components/admin/rich-text-editor";
 import { ImageUpload } from "@/components/admin/image-upload";
 import { Lock, Unlock } from "lucide-react";
+import { EditBlogSkeleton } from "./components/edit-blog-skeleton";
 
 export default function EditBlogPostPage() {
   const router = useRouter();
@@ -144,12 +145,9 @@ export default function EditBlogPostPage() {
     );
   };
 
+  // Show skeleton while loading, but keep form structure
   if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <p className="text-muted-foreground">Loading...</p>
-      </div>
-    );
+    return <EditBlogSkeleton />;
   }
 
   return (

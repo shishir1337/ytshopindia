@@ -1,0 +1,10 @@
+add another dialog 
+
+for 
+
+Email address associated with the account which should be designated as the owner 
+continue button
+then payment flow
+
+* show price in channel card 
+* Buy with WhatsApp

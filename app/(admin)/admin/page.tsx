@@ -11,6 +11,8 @@ import {
   CheckCircle2,
   XCircle,
   AlertCircle,
+  ShoppingBag,
+  DollarSign,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -45,35 +47,35 @@ export default async function AdminDashboardPage() {
 
   const stats = [
     {
+      title: "Total Orders",
+      value: data.totalOrders,
+      subtitle: `${data.paidOrders} paid, ${data.pendingOrders} pending`,
+      icon: ShoppingBag,
+      href: "/admin/orders",
+      color: "blue",
+    },
+    {
       title: "Total Listings",
       value: data.totalListings,
       subtitle: `${data.approvedListings} approved, ${data.pendingListings} pending`,
       icon: Youtube,
       href: "/admin/listings",
-      color: "blue",
-    },
-    {
-      title: "Total Blog Posts",
-      value: data.totalBlogs,
-      subtitle: `${data.publishedBlogs} published, ${data.draftBlogs} drafts`,
-      icon: FileText,
-      href: "/admin/blog",
       color: "purple",
     },
     {
-      title: "Pending Listings",
-      value: data.pendingListings,
-      subtitle: "Require review",
+      title: "Pending Orders",
+      value: data.pendingOrders,
+      subtitle: "Awaiting payment",
       icon: AlertCircle,
-      href: "/admin/listings?status=pending",
+      href: "/admin/orders?status=pending",
       color: "amber",
     },
     {
-      title: "Published Posts",
-      value: data.publishedBlogs,
-      subtitle: `${Math.round((data.publishedBlogs / data.totalBlogs) * 100) || 0}% of total`,
-      icon: CheckCircle2,
-      href: "/admin/blog?published=true",
+      title: "Paid Orders",
+      value: data.paidOrders,
+      subtitle: "Ready for delivery",
+      icon: DollarSign,
+      href: "/admin/orders?status=paid",
       color: "emerald",
     },
   ];
@@ -246,6 +248,12 @@ export default async function AdminDashboardPage() {
             </div>
             <div className="p-4 sm:p-6 space-y-2">
               <Button asChild variant="outline" className="w-full justify-start">
+                <Link href="/admin/orders">
+                  <ShoppingBag className="mr-2 size-4" />
+                  Manage Orders
+                </Link>
+              </Button>
+              <Button asChild variant="outline" className="w-full justify-start">
                 <Link href="/admin/listings">
                   <Youtube className="mr-2 size-4" />
                   Manage Listings
@@ -263,6 +271,89 @@ export default async function AdminDashboardPage() {
                   Manage Posts
                 </Link>
               </Button>
+            </div>
+          </div>
+
+          {/* Recent Orders */}
+          <div className="rounded-xl border border-border bg-card shadow-sm">
+            <div className="border-b border-border p-4 sm:p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-base sm:text-lg font-semibold text-foreground">
+                    Recent Orders
+                  </h2>
+                  <p className="mt-1 text-xs sm:text-sm text-muted-foreground">
+                    Latest customer orders
+                  </p>
+                </div>
+                <Button variant="ghost" size="sm" asChild>
+                  <Link href="/admin/orders">
+                    <span className="hidden sm:inline">View All</span>
+                    <ArrowRight className="size-4 sm:ml-2" />
+                  </Link>
+                </Button>
+              </div>
+            </div>
+            <div className="p-4 sm:p-6">
+              {data.recentOrders.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-8 sm:py-12 text-center">
+                  <ShoppingBag className="size-10 sm:size-12 text-muted-foreground/50" />
+                  <p className="mt-4 text-sm font-medium text-foreground">
+                    No orders yet
+                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Orders will appear here once customers make purchases
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-3 sm:space-y-4">
+                  {data.recentOrders.map((order) => (
+                    <Link
+                      key={order.id}
+                      href={`/payment/${order.id}`}
+                      target="_blank"
+                      className="group flex items-center justify-between rounded-lg border border-border bg-background p-3 sm:p-4 transition-colors hover:border-primary/50 hover:bg-accent/50"
+                    >
+                      <div className="flex-1 space-y-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h3 className="text-sm sm:text-base font-medium text-foreground group-hover:text-primary truncate">
+                            {order.channelListing.title}
+                          </h3>
+                          <Badge
+                            variant="outline"
+                            className={cn(
+                              "text-xs flex-shrink-0 border-none",
+                              order.status === "completed" && "text-[#16A34A] bg-[#DCFCE7]",
+                              order.status === "delivered" && "text-[#9333EA] bg-[#F3E8FF]",
+                              order.status === "paid" && "text-[#2563EB] bg-[#DBEAFE]",
+                              order.status === "pending" && "text-[#F59E0B] bg-[#FEF3C7]",
+                              (order.status === "cancelled" || order.status === "expired") && "text-[#DC2626] bg-[#FEE2E2]"
+                            )}
+                          >
+                            {order.status}
+                          </Badge>
+                        </div>
+                        <div className="flex items-center gap-2 sm:gap-4 text-xs text-muted-foreground flex-wrap">
+                          <span className="flex items-center gap-1">
+                            <DollarSign className="size-3" />
+                            {order.currency} {order.amount}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Calendar className="size-3" />
+                            {formatDate(order.createdAt)}
+                          </span>
+                          {order.user ? (
+                            <span className="text-xs">{order.user.name || order.user.email}</span>
+                          ) : (
+                            <span className="text-xs">Guest</span>
+                          )}
+                        </div>
+                      </div>
+                      <ArrowRight className="size-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 flex-shrink-0 ml-2" />
+                    </Link>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 

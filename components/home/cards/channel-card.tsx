@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { CheckCircle2, XCircle, Users, TrendingUp, ArrowRight } from "lucide-react"
+import { CheckCircle2, XCircle, Users, TrendingUp, ArrowRight, DollarSign } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 interface ChannelCardProps {
@@ -12,6 +12,8 @@ interface ChannelCardProps {
   subscribers?: string | null
   monetized?: boolean | null
   description?: string | null
+  expectedPrice?: string | null
+  currency?: string | null
 }
 
 export function ChannelCard({
@@ -21,6 +23,8 @@ export function ChannelCard({
   subscribers,
   monetized,
   description,
+  expectedPrice,
+  currency,
 }: ChannelCardProps) {
   // Parse subscribers string to number for formatting
   const parseSubscribers = (subs: string | null | undefined): number => {
@@ -150,10 +154,24 @@ export function ChannelCard({
               </div>
             </div>
 
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <TrendingUp className="size-4" />
-              <span className="text-xs font-medium">Active</span>
-            </div>
+            {expectedPrice ? (
+              <div className="flex items-center gap-2">
+                <div className="flex items-center justify-center size-10 rounded-lg bg-green-500/10 text-green-600 dark:text-green-400">
+                  <DollarSign className="size-5" />
+                </div>
+                <div className="flex flex-col text-right">
+                  <span className="text-xs font-medium text-muted-foreground">Price</span>
+                  <span className="text-lg font-bold text-foreground">
+                    {currency || "₹"}{expectedPrice}
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <TrendingUp className="size-4" />
+                <span className="text-xs font-medium">Active</span>
+              </div>
+            )}
           </div>
 
           {/* CTA Button */}

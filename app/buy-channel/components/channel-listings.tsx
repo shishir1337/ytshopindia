@@ -73,6 +73,8 @@ async function getListings(params: { [key: string]: string | string[] | undefine
                 monetized: true,
                 category: true,
                 viewsLast28Days: true,
+                expectedPrice: true,
+                currency: true,
                 createdAt: true,
             },
             orderBy: { createdAt: "desc" },
@@ -133,6 +135,8 @@ export async function ChannelListings({ searchParams }: ChannelListingsProps) {
                         subscribers={listing.subscribers}
                         monetized={listing.monetized}
                         description={listing.description}
+                        expectedPrice={listing.expectedPrice}
+                        currency={listing.currency}
                     />
                 ))}
             </div>

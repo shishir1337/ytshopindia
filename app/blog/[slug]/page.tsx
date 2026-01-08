@@ -7,6 +7,7 @@ import { BlogCard } from "@/components/home/cards/blog-card";
 import { RecentBlogs } from "@/components/blog/recent-blogs";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, Clock } from "lucide-react";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -188,7 +189,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                   prose-a:text-primary prose-a:no-underline hover:prose-a:underline 
                   prose-strong:text-foreground prose-code:text-foreground 
                   prose-pre:bg-muted prose-img:rounded-lg prose-img:border prose-img:border-border"
-                dangerouslySetInnerHTML={{ __html: post.content }}
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.content) }}
               />
             </div>
           </article>

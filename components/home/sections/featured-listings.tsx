@@ -17,6 +17,8 @@ async function getFeaturedListings() {
         featuredImage: true,
         subscribers: true,
         monetized: true,
+        expectedPrice: true,
+        currency: true,
       },
       orderBy: { createdAt: "desc" },
       take: 6,
@@ -60,6 +62,8 @@ export async function FeaturedListings() {
               subscribers={listing.subscribers}
               monetized={listing.monetized}
               description={listing.description}
+              expectedPrice={listing.expectedPrice}
+              currency={listing.currency}
             />
           ))}
         </div>

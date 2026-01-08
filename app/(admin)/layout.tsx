@@ -1,10 +1,20 @@
-export default function AdminGroupLayout({
+import { redirect } from "next/navigation";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
+
+export default async function AdminGroupLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Route group layout - no header/footer for admin routes
-  // This layout only wraps children, root layout handles html/body
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session || session.user.role !== "admin") {
+    redirect("/");
+  }
+
   return <>{children}</>;
 }
 

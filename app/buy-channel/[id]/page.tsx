@@ -20,9 +20,11 @@ import {
     DollarSign,
     Video,
     Globe,
+    ExternalLink,
 } from "lucide-react"
 import { ImageCarousel } from "../components/image-carousel"
 import { IconBrandWhatsapp } from "@tabler/icons-react"
+import { BuyButton } from "./components/buy-button"
 
 interface PageProps {
     params: Promise<{ id: string }>
@@ -163,11 +165,27 @@ export default async function ListingDetailsPage({ params }: PageProps) {
                                     {listing.title}
                                 </h1>
                             </div>
-                            {listing.listingId && (
-                                <p className="text-sm text-muted-foreground mb-4">
-                                    Listing ID: <span className="font-mono font-medium">{listing.listingId}</span>
-                                </p>
-                            )}
+                            <div className="mb-4 space-y-2">
+                                {listing.listingId && (
+                                    <p className="text-sm text-muted-foreground">
+                                        Listing ID: <span className="font-mono font-medium">{listing.listingId}</span>
+                                    </p>
+                                )}
+                                {listing.channelLink && (
+                                    <p className="text-sm text-muted-foreground">
+                                        Channel Link:{" "}
+                                        <a
+                                            href={listing.channelLink}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="font-medium text-primary hover:underline inline-flex items-center gap-1"
+                                        >
+                                            {listing.channelLink}
+                                            <ExternalLink className="size-3.5" />
+                                        </a>
+                                    </p>
+                                )}
+                            </div>
                             {listing.description && (
                                 <div className="prose prose-sm max-w-none text-muted-foreground">
                                     <p className="whitespace-pre-wrap">{listing.description}</p>
@@ -257,7 +275,7 @@ export default async function ListingDetailsPage({ params }: PageProps) {
                             {/* Price & Contact Card */}
                             <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
                                 <div className="text-center mb-6">
-                                    <p className="text-sm text-muted-foreground mb-2">Expected Price</p>
+                                    <p className="text-sm text-muted-foreground mb-2">Price</p>
                                     <div className="text-3xl font-bold text-primary">
                                         {listing.expectedPrice ? (
                                             `${listing.currency}${listing.expectedPrice}`
@@ -267,15 +285,19 @@ export default async function ListingDetailsPage({ params }: PageProps) {
                                     </div>
                                 </div>
 
-                                <Button asChild size="lg" className="w-full mb-3 bg-[#25D366] hover:bg-[#20ba59] text-white border-none shadow-lg">
-                                    <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
-                                        <IconBrandWhatsapp className="size-5 mr-2" />
-                                        Buy Now
-                                    </a>
-                                </Button>
+                                <div className="space-y-3">
+                                    <BuyButton listingId={listing.id} />
+                                    
+                                    <Button asChild size="lg" variant="outline" className="w-full bg-[#25D366] hover:bg-[#20ba59] text-white border-none shadow-lg">
+                                        <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+                                            <IconBrandWhatsapp className="size-5 mr-2" />
+                                            Buy with WhatsApp
+                                        </a>
+                                    </Button>
+                                </div>
 
-                                <p className="text-xs text-center text-muted-foreground">
-                                    Our team will assist you with the purchase process
+                                <p className="text-xs text-center text-muted-foreground mt-3">
+                                    Choose your preferred payment method
                                 </p>
                             </div>
 

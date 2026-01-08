@@ -60,6 +60,7 @@ model User {
   banned     Boolean?  @default(false)
   banReason  String?
   banExpires DateTime?
+  orders     Order[]
 
   @@map("user")
 }
@@ -113,6 +114,15 @@ model Verification {
   @@index([identifier])
 }
 
+model RateLimit {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  count       Int      @default(1)
+  lastRequest BigInt
+
+  @@map("rate_limit")
+}
+
 model ChannelListing {
   id              String    @id @default(cuid())
   title           String
@@ -162,11 +172,69 @@ model ChannelListing {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
+  orders          Order[]
+
   @@index([status])
   @@index([listingId])
   @@index([createdAt])
   @@map("channel_listings")
 }
+
+model Order {
+  id                String          @id @default(cuid())
+  
+  // Order Details
+  channelListingId  String
+  channelListing    ChannelListing  @relation(fields: [channelListingId], references: [id], onDelete: Restrict)
+  
+  // User Information (either userId or guestEmail)
+  userId            String?
+  user              User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
+  guestEmail        String?
+  guestName         String?
+  
+  // Pricing
+  originalPrice     String          // Original price in listing currency
+  originalCurrency  String          @default("₹")
+  amount            String          // Amount in USD for Cryptomus
+  currency          String          @default("USD")
+  exchangeRate      Float?          // Exchange rate used for conversion
+  
+  // Cryptomus Payment Details
+  cryptomusInvoiceId String?        @unique
+  cryptomusOrderId   String?        @unique
+  cryptomusPaymentUrl String?       @db.Text
+  cryptomusQrCode     String?       @db.Text
+  paymentNetwork      String?       // e.g., "TRC20", "BSC", "ETH"
+  paymentAddress      String?       // Crypto wallet address
+  paymentAmount       String?       // Amount in crypto
+  
+  // Order Status
+  status            String          @default("pending") // pending, paid, delivered, completed, cancelled, expired
+  paymentStatus     String?         // paid, pending, expired, cancelled
+  
+  // Delivery Information
+  deliveredAt       DateTime?
+  deliveredBy       String?        // Admin user ID
+  deliveryDetails   String?        @db.Text // Access details, credentials, etc.
+  deliveryNotes     String?        @db.Text
+  channelAccessEmail String?       // Email designated for channel access assignment
+  
+  // Timestamps
+  paidAt            DateTime?
+  expiresAt         DateTime?      // Payment expiration time
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@index([userId])
+  @@index([channelListingId])
+  @@index([status])
+  @@index([cryptomusInvoiceId])
+  @@index([cryptomusOrderId])
+  @@index([createdAt])
+  @@map("orders")
+}
+
 model SiteSetting {
   id             String   @id @default("singleton")
   adminWhatsapp  String   @default("+919101782780")

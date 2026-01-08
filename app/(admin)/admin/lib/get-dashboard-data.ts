@@ -8,8 +8,12 @@ export async function getDashboardData() {
     totalListings,
     pendingListings,
     approvedListings,
+    totalOrders,
+    pendingOrders,
+    paidOrders,
     recentBlogs,
     recentListings,
+    recentOrders,
   ] = await Promise.all([
     prisma.blogPost.count(),
     prisma.blogPost.count({ where: { published: true } }),
@@ -17,6 +21,9 @@ export async function getDashboardData() {
     prisma.channelListing.count(),
     prisma.channelListing.count({ where: { status: "pending" } }),
     prisma.channelListing.count({ where: { status: "approved" } }),
+    prisma.order.count(),
+    prisma.order.count({ where: { status: "pending" } }),
+    prisma.order.count({ where: { status: "paid" } }),
     prisma.blogPost.findMany({
       take: 5,
       orderBy: { createdAt: "desc" },
@@ -41,6 +48,23 @@ export async function getDashboardData() {
         updatedAt: true,
       },
     }),
+    prisma.order.findMany({
+      take: 5,
+      orderBy: { createdAt: "desc" },
+      include: {
+        channelListing: {
+          select: {
+            title: true,
+          },
+        },
+        user: {
+          select: {
+            email: true,
+            name: true,
+          },
+        },
+      },
+    }),
   ]);
 
   return {
@@ -50,8 +74,12 @@ export async function getDashboardData() {
     totalListings,
     pendingListings,
     approvedListings,
+    totalOrders,
+    pendingOrders,
+    paidOrders,
     recentBlogs,
     recentListings,
+    recentOrders,
   };
 }
 
