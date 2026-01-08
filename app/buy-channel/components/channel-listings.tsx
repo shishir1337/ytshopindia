@@ -48,6 +48,7 @@ async function getListings(params: { [key: string]: string | string[] | undefine
     try {
         const subscriberFilter = typeof params.subscribers === "string" ? params.subscribers : "all"
         const monetizationFilter = typeof params.monetization === "string" ? params.monetization : "all"
+        const searchQuery = typeof params.search === "string" ? params.search.trim().toLowerCase() : ""
 
         // Build where clause
         const where: Record<string, unknown> = {
@@ -59,6 +60,14 @@ async function getListings(params: { [key: string]: string | string[] | undefine
             where.monetized = true
         } else if (monetizationFilter === "not-monetized") {
             where.monetized = false
+        }
+
+        // Search filter - filter by channel name (title)
+        if (searchQuery) {
+            where.title = {
+                contains: searchQuery,
+                mode: "insensitive",
+            }
         }
 
         // Fetch listings

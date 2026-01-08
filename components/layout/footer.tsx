@@ -5,6 +5,7 @@ import Link from "next/link"
 import { useTheme } from "next-themes"
 import * as React from "react"
 import { Facebook, Youtube, Instagram, Phone, Mail, MapPin } from "lucide-react"
+import { IconBrandTelegram } from "@tabler/icons-react"
 
 const footerLinks = {
   company: [
@@ -25,19 +26,19 @@ const footerLinks = {
 
 const socialLinks = [
   {
-    name: "Facebook",
-    icon: Facebook,
-    href: "https://facebook.com",
+    name: "Telegram",
+    icon: IconBrandTelegram,
+    href: "https://t.me/ytshopindiaofficial",
   },
   {
     name: "YouTube",
     icon: Youtube,
-    href: "https://youtube.com",
+    href: "https://www.youtube.com/@Ytshopindia",
   },
   {
     name: "Instagram",
     icon: Instagram,
-    href: "https://instagram.com",
+    href: "https://instagram.com/ytshopindia",
   },
 ]
 
@@ -145,11 +146,11 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="mailto:info@ytshopindia.com"
+                  href="mailto:ytshopindia@gmail.com"
                   className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
                 >
                   <Mail className="size-4" />
-                  <span>info@ytshopindia.com</span>
+                  <span>ytshopindia@gmail.com</span>
                 </a>
               </li>
             </ul>

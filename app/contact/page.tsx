@@ -79,10 +79,10 @@ export default async function ContactPage() {
                                         Prefer email? Send us a detailed message.
                                     </p>
                                     <Link
-                                        href="mailto:info@ytshopindia.com"
+                                        href="mailto:ytshopindia@gmail.com"
                                         className="text-primary font-medium hover:underline text-lg block"
                                     >
-                                        info@ytshopindia.com
+                                        ytshopindia@gmail.com
                                     </Link>
                                 </div>
                             </CardContent>

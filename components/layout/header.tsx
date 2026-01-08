@@ -5,7 +5,7 @@ import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useTheme } from "next-themes"
 import * as React from "react"
-import { ChevronDown, Menu, X, LogOut, LayoutDashboard } from "lucide-react"
+import { ChevronDown, Menu, X, LogOut, LayoutDashboard, Shield } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/mode-toggle"
 import { cn } from "@/lib/utils"
@@ -179,6 +179,14 @@ export function Header() {
                       Dashboard
                     </Link>
                   </DropdownMenuItem>
+                  {session.user.role === "admin" && (
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin" className="cursor-pointer">
+                        <Shield className="mr-2 size-4" />
+                        Admin Dashboard
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive focus:text-destructive">
                     <LogOut className="mr-2 size-4" />
@@ -271,6 +279,14 @@ export function Header() {
                         Dashboard
                       </Link>
                     </Button>
+                    {session.user.role === "admin" && (
+                      <Button variant="outline" size="sm" className="w-full justify-start" asChild>
+                        <Link href="/admin" onClick={() => setMobileMenuOpen(false)}>
+                          <Shield className="mr-2 size-4" />
+                          Admin Dashboard
+                        </Link>
+                      </Button>
+                    )}
                     <Button variant="outline" size="sm" className="w-full justify-start text-destructive hover:text-destructive" onClick={handleLogout}>
                       <LogOut className="mr-2 size-4" />
                       Log out

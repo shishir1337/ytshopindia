@@ -2,6 +2,7 @@ import { Suspense } from "react"
 import { Metadata } from "next"
 import { ChannelListings } from "./components/channel-listings"
 import { ChannelFilters } from "./components/channel-filters"
+import { TelegramSupport } from "./components/telegram-support"
 import { Youtube, ShoppingBag } from "lucide-react"
 
 export const metadata: Metadata = {
@@ -49,6 +50,7 @@ export default function BuyChannelPage({
                     </Suspense>
                 </div>
             </section>
+            <TelegramSupport />
         </main>
     )
 }

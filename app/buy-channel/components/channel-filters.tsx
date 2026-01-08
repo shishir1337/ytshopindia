@@ -9,7 +9,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { Users, DollarSign, X } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Users, DollarSign, X, Search } from "lucide-react"
+import { useEffect, useState } from "react"
 
 const subscriberFilters = [
     { value: "all", label: "All Subscribers" },
@@ -35,8 +37,31 @@ export function ChannelFilters() {
 
     const currentSubscribers = searchParams.get("subscribers") || "all"
     const currentMonetization = searchParams.get("monetization") || "all"
+    const currentSearch = searchParams.get("search") || ""
 
-    const hasActiveFilters = currentSubscribers !== "all" || currentMonetization !== "all"
+    const [searchValue, setSearchValue] = useState(currentSearch)
+
+    const hasActiveFilters = currentSubscribers !== "all" || currentMonetization !== "all" || currentSearch !== ""
+
+    // Debounce search input
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            const params = new URLSearchParams(searchParams.toString())
+            if (searchValue.trim() === "") {
+                params.delete("search")
+            } else {
+                params.set("search", searchValue.trim())
+            }
+            router.push(`${pathname}?${params.toString()}`)
+        }, 300)
+
+        return () => clearTimeout(timer)
+    }, [searchValue, router, pathname, searchParams])
+
+    // Update search value when URL param changes externally
+    useEffect(() => {
+        setSearchValue(currentSearch)
+    }, [currentSearch])
 
     const updateFilter = (key: string, value: string) => {
         const params = new URLSearchParams(searchParams.toString())
@@ -49,6 +74,7 @@ export function ChannelFilters() {
     }
 
     const clearFilters = () => {
+        setSearchValue("")
         router.push(pathname)
     }
 
@@ -107,6 +133,18 @@ export function ChannelFilters() {
                         Clear Filters
                     </Button>
                 )}
+            </div>
+
+            {/* Search Input */}
+            <div className="relative w-full sm:w-auto sm:min-w-[280px]">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                <Input
+                    type="text"
+                    placeholder="Search by channel name..."
+                    value={searchValue}
+                    onChange={(e) => setSearchValue(e.target.value)}
+                    className="pl-9"
+                />
             </div>
         </div>
     )
