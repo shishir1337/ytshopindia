@@ -295,7 +295,7 @@ export default async function ListingDetailsPage({ params }: PageProps) {
                                     <Button asChild size="lg" variant="outline" className="w-full bg-[#25D366] hover:bg-[#20ba59] text-white border-none shadow-lg">
                                         <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
                                             <IconBrandWhatsapp className="size-5 mr-2" />
-                                            Buy with WhatsApp
+                                            Buy with INR
                                         </a>
                                     </Button>
                                 </div>
