@@ -30,9 +30,9 @@ export function CreateListingClient() {
         title: "",
         description: "",
         channelLink: "",
-        sellerName: "",
-        sellerEmail: "",
-        sellerWhatsapp: "",
+        sellerName: "YT Shop India",
+        sellerEmail: "support@ytshopindia.com",
+        sellerWhatsapp: "+919101782780",
         expectedPrice: "",
         currency: "₹",
         featuredImage: "",
@@ -66,13 +66,8 @@ export function CreateListingClient() {
         setSaving(true);
 
         try {
-            // Combine description with monetization status
+            // Description should be used as is
             let finalDescription = formData.description || "";
-            if (formData.monetizationStatus) {
-                finalDescription = finalDescription
-                    ? `${finalDescription}\n\nMonetization Status: ${formData.monetizationStatus}`
-                    : `Monetization Status: ${formData.monetizationStatus}`;
-            }
 
             // Set monetized boolean based on monetization status
             const monetized = formData.monetizationStatus.toLowerCase() === "monetized";
@@ -136,7 +131,7 @@ export function CreateListingClient() {
                     videoCount: youtubeData.videoCount || prev.videoCount,
                     featuredImage: youtubeData.featuredImage || prev.featuredImage,
                     title: prev.title || data.channelInfo.title || "",
-                    description: prev.description || data.channelInfo.description || "",
+                    // Description is NOT overwritten as requested
                 }));
 
                 toast.success("Channel data fetched successfully!", {

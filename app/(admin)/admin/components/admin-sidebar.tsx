@@ -44,6 +44,11 @@ const navigation = [
     icon: Settings,
   },
   {
+    name: "Analytics Videos",
+    href: "/admin/analytics-videos",
+    icon: Youtube,
+  },
+  {
     name: "Users",
     href: "/admin/users",
     icon: User,

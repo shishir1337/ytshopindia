@@ -5,6 +5,14 @@ import Image from "next/image"
 import { ChevronLeft, ChevronRight, Youtube } from "lucide-react"
 import { motion, AnimatePresence } from "motion/react"
 import { cn } from "@/lib/utils"
+import {
+    Dialog,
+    DialogContent,
+    DialogTrigger,
+    DialogTitle,
+    DialogHeader,
+} from "@/components/ui/dialog"
+import { Maximize2 } from "lucide-react"
 
 interface ImageCarouselProps {
     images: string[]
@@ -67,7 +75,7 @@ export function ImageCarousel({ images, title }: ImageCarouselProps) {
     }
 
     return (
-        <div className="group relative aspect-video w-full overflow-hidden rounded-xl border border-border bg-muted">
+        <div className="group relative aspect-video w-full overflow-hidden rounded-xl border border-border bg-black/95 flex items-center justify-center">
             {/* Main Image */}
             <div className="relative h-full w-full">
                 <AnimatePresence initial={false} custom={direction}>
@@ -82,16 +90,41 @@ export function ImageCarousel({ images, title }: ImageCarouselProps) {
                             x: { type: "spring", stiffness: 300, damping: 30 },
                             opacity: { duration: 0.2 }
                         }}
-                        className="absolute inset-0"
+                        className="absolute inset-0 flex items-center justify-center cursor-zoom-in group/image"
                     >
-                        <Image
-                            src={images[currentIndex]}
-                            alt={`${title} - Image ${currentIndex + 1}`}
-                            fill
-                            className="object-cover"
-                            priority
-                            unoptimized={images[currentIndex].startsWith("/uploads/")}
-                        />
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <div className="relative h-full w-full">
+                                    <Image
+                                        src={images[currentIndex]}
+                                        alt={`${title} - Image ${currentIndex + 1}`}
+                                        fill
+                                        className="object-contain"
+                                        priority
+                                        unoptimized={images[currentIndex].startsWith("/uploads/")}
+                                    />
+                                    {/* Preview Label */}
+                                    <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors group-hover/image:bg-black/20">
+                                        <div className="flex items-center gap-2 rounded-full bg-black/50 px-4 py-2 text-white opacity-0 transition-opacity group-hover/image:opacity-100">
+                                            <Maximize2 className="size-4" />
+                                            <span className="text-sm font-medium">Click to Preview</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-7xl border-none bg-transparent p-0 shadow-none outline-none overflow-hidden sm:max-w-[90vw] md:max-w-[95vw]">
+                                <DialogHeader className="sr-only">
+                                    <DialogTitle>Image Preview</DialogTitle>
+                                </DialogHeader>
+                                <div className="relative aspect-auto h-full max-h-[90vh] w-full flex items-center justify-center">
+                                    <img
+                                        src={images[currentIndex]}
+                                        alt={`${title} - Preview`}
+                                        className="h-full w-full object-contain rounded-lg"
+                                    />
+                                </div>
+                            </DialogContent>
+                        </Dialog>
                     </motion.div>
                 </AnimatePresence>
             </div>

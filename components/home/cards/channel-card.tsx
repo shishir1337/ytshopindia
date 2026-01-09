@@ -12,6 +12,7 @@ interface ChannelCardProps {
   subscribers?: string | null
   monetized?: boolean | null
   description?: string | null
+  category?: string | null
   expectedPrice?: string | null
   currency?: string | null
 }
@@ -23,6 +24,7 @@ export function ChannelCard({
   subscribers,
   monetized,
   description,
+  category,
   expectedPrice,
   currency,
 }: ChannelCardProps) {
@@ -133,11 +135,17 @@ export function ChannelCard({
             <h3 className="line-clamp-2 text-xl font-bold text-foreground group-hover:text-primary transition-colors mb-2">
               {title}
             </h3>
-            {description && (
+            {category && (
+              <div className="inline-flex items-center rounded-md bg-primary/5 px-2 py-0.5 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20 mb-2">
+                {category}
+              </div>
+            )}
+            {/* Description hidden as per request */}
+            {/* {description && (
               <p className="line-clamp-2 text-sm text-muted-foreground leading-relaxed">
                 {description}
               </p>
-            )}
+            )} */}
           </div>
 
           {/* Stats Section */}

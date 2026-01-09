@@ -144,6 +144,7 @@ export async function ChannelListings({ searchParams }: ChannelListingsProps) {
                         subscribers={listing.subscribers}
                         monetized={listing.monetized}
                         description={listing.description}
+                        category={listing.category}
                         expectedPrice={listing.expectedPrice}
                         currency={listing.currency}
                     />

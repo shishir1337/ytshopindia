@@ -17,7 +17,6 @@ import { Loader2, User, Phone, Link as LinkIcon, DollarSign, Mail, RefreshCw, Sh
 
 export function SellChannelForm() {
   const [formData, setFormData] = React.useState({
-    title: "",
     name: "",
     whatsapp: "",
     channelLink: "",
@@ -52,10 +51,6 @@ export function SellChannelForm() {
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
-
-    if (!formData.title.trim()) {
-      newErrors.title = "Channel title is required"
-    }
 
     if (!formData.name.trim()) {
       newErrors.name = "Name is required"
@@ -108,7 +103,6 @@ export function SellChannelForm() {
     if (!validateForm()) {
       // Mark all fields as touched on submit
       setTouched({
-        title: true,
         name: true,
         whatsapp: true,
         channelLink: true,
@@ -128,7 +122,7 @@ export function SellChannelForm() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          title: formData.title,
+          title: "Channel Sale Request",
           channelLink: formData.channelLink,
           sellerName: formData.name,
           sellerEmail: formData.email,
@@ -146,7 +140,6 @@ export function SellChannelForm() {
         })
         // Reset form
         setFormData({
-          title: "",
           name: "",
           whatsapp: "",
           channelLink: "",
@@ -159,7 +152,7 @@ export function SellChannelForm() {
         })
         setTouched({})
         generateCaptcha()
-        
+
         // Redirect to WhatsApp URL if available
         if (data.whatsappUrl) {
           // Small delay to show the toast message
@@ -189,23 +182,6 @@ export function SellChannelForm() {
           <p className="text-sm text-muted-foreground mt-1">Details about your YouTube channel</p>
         </div>
 
-        {/* Channel Title */}
-        <div className="space-y-2">
-          <Label htmlFor="title" className="flex items-center gap-2">
-            <LinkIcon className="size-4 text-muted-foreground" />
-            <span>Channel Title <span className="text-primary">*</span></span>
-          </Label>
-          <Input
-            id="title"
-            type="text"
-            placeholder="e.g., Free Fire Gaming Youtube Channel For Sale"
-            value={formData.title}
-            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-            onBlur={() => handleBlur("title")}
-            className={errors.title && touched.title ? "border-destructive" : ""}
-          />
-          {errors.title && touched.title && <p className="text-sm text-destructive">{errors.title}</p>}
-        </div>
 
         {/* Channel Link */}
         <div className="space-y-2">
@@ -290,62 +266,62 @@ export function SellChannelForm() {
         </div>
       </div>
 
-        {/* Monetization Status */}
-        <div className="space-y-2">
-          <Label htmlFor="monetizationStatus">
-            Monetization Status <span className="text-primary">*</span>
-          </Label>
+      {/* Monetization Status */}
+      <div className="space-y-2">
+        <Label htmlFor="monetizationStatus">
+          Monetization Status <span className="text-primary">*</span>
+        </Label>
+        <Select
+          value={formData.monetizationStatus}
+          onValueChange={(value) => {
+            setFormData({ ...formData, monetizationStatus: value })
+            handleBlur("monetizationStatus")
+          }}
+        >
+          <SelectTrigger id="monetizationStatus" className={errors.monetizationStatus && touched.monetizationStatus ? "border-destructive" : ""}>
+            <SelectValue placeholder="Select monetization status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Monetized">Monetized</SelectItem>
+            <SelectItem value="Non-Monetized">Non-Monetized</SelectItem>
+            <SelectItem value="Demonetized">Demonetized</SelectItem>
+          </SelectContent>
+        </Select>
+        {errors.monetizationStatus && touched.monetizationStatus && <p className="text-sm text-destructive">{errors.monetizationStatus}</p>}
+      </div>
+
+      {/* Expected Price */}
+      <div className="space-y-2">
+        <Label htmlFor="expectedPrice" className="flex items-center gap-2">
+          <DollarSign className="size-4 text-muted-foreground" />
+          <span>Expected Price <span className="text-primary">*</span></span>
+        </Label>
+        <div className="flex gap-2">
           <Select
-            value={formData.monetizationStatus}
-            onValueChange={(value) => {
-              setFormData({ ...formData, monetizationStatus: value })
-              handleBlur("monetizationStatus")
-            }}
+            value={formData.currency}
+            onValueChange={(value) => setFormData({ ...formData, currency: value })}
           >
-            <SelectTrigger id="monetizationStatus" className={errors.monetizationStatus && touched.monetizationStatus ? "border-destructive" : ""}>
-              <SelectValue placeholder="Select monetization status" />
+            <SelectTrigger className="w-28">
+              <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Monetized">Monetized</SelectItem>
-              <SelectItem value="Non-Monetized">Non-Monetized</SelectItem>
-              <SelectItem value="Demonetized">Demonetized</SelectItem>
+              <SelectItem value="₹">₹ (INR)</SelectItem>
+              <SelectItem value="$">$ (USD)</SelectItem>
+              <SelectItem value="€">€ (EUR)</SelectItem>
             </SelectContent>
           </Select>
-          {errors.monetizationStatus && touched.monetizationStatus && <p className="text-sm text-destructive">{errors.monetizationStatus}</p>}
+          <Input
+            id="expectedPrice"
+            type="text"
+            placeholder="Enter expected price"
+            value={formData.expectedPrice}
+            onChange={(e) => setFormData({ ...formData, expectedPrice: e.target.value })}
+            onBlur={() => handleBlur("expectedPrice")}
+            className={`flex-1 ${errors.expectedPrice && touched.expectedPrice ? "border-destructive" : ""}`}
+          />
         </div>
-
-        {/* Expected Price */}
-        <div className="space-y-2">
-          <Label htmlFor="expectedPrice" className="flex items-center gap-2">
-            <DollarSign className="size-4 text-muted-foreground" />
-            <span>Expected Price <span className="text-primary">*</span></span>
-          </Label>
-          <div className="flex gap-2">
-            <Select
-              value={formData.currency}
-              onValueChange={(value) => setFormData({ ...formData, currency: value })}
-            >
-              <SelectTrigger className="w-28">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="₹">₹ (INR)</SelectItem>
-                <SelectItem value="$">$ (USD)</SelectItem>
-                <SelectItem value="€">€ (EUR)</SelectItem>
-              </SelectContent>
-            </Select>
-            <Input
-              id="expectedPrice"
-              type="text"
-              placeholder="Enter expected price"
-              value={formData.expectedPrice}
-              onChange={(e) => setFormData({ ...formData, expectedPrice: e.target.value })}
-              onBlur={() => handleBlur("expectedPrice")}
-              className={`flex-1 ${errors.expectedPrice && touched.expectedPrice ? "border-destructive" : ""}`}
-            />
-          </div>
-          {errors.expectedPrice && touched.expectedPrice && <p className="text-sm text-destructive">{errors.expectedPrice}</p>}
-        </div>
+        {errors.expectedPrice && touched.expectedPrice && <p className="text-sm text-destructive">{errors.expectedPrice}</p>}
+      </div>
 
       {/* Verification Section */}
       <div className="space-y-5 pt-6 border-t border-border">
@@ -437,12 +413,12 @@ export function SellChannelForm() {
           ) : (
             <>
               <MessageCircle className="mr-2 size-5" />
-              Submit Listing for Review
+              Submit for Review
             </>
           )}
         </Button>
         <p className="text-xs text-center text-muted-foreground mt-3">
-          Your listing will be reviewed by our admin team before being published
+          After submitting the form, our team will contact you shortly.
         </p>
       </div>
     </form>

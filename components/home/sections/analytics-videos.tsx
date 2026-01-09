@@ -5,49 +5,29 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { motion } from "motion/react"
 
-// Dummy YouTube video data - will be replaced with real data later
-const videos = [
-  {
-    id: "1",
-    videoId: "dQw4w9WgXcQ", // Placeholder - replace with actual YouTube video IDs
-    title: "Channel Analytics Overview",
-    thumbnail: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=800&h=450&fit=crop",
-  },
-  {
-    id: "2",
-    videoId: "dQw4w9WgXcQ",
-    title: "Subscriber Growth Analysis",
-    thumbnail: "https://images.unsplash.com/photo-1533750516457-a7f992034fec?w=800&h=450&fit=crop",
-  },
-  {
-    id: "3",
-    videoId: "dQw4w9WgXcQ",
-    title: "Revenue Insights & Trends",
-    thumbnail: "https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=800&h=450&fit=crop",
-  },
-  {
-    id: "4",
-    videoId: "dQw4w9WgXcQ",
-    title: "Engagement Metrics Deep Dive",
-    thumbnail: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&h=450&fit=crop",
-  },
-  {
-    id: "5",
-    videoId: "dQw4w9WgXcQ",
-    title: "Content Performance Review",
-    thumbnail: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=450&fit=crop",
-  },
-  {
-    id: "6",
-    videoId: "dQw4w9WgXcQ",
-    title: "Channel Valuation Guide",
-    thumbnail: "https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=800&h=450&fit=crop",
-  },
-]
-
 export function AnalyticsVideos() {
+  const [videos, setVideos] = React.useState<any[]>([])
+  const [loading, setLoading] = React.useState(true)
   const [currentIndex, setCurrentIndex] = React.useState(0)
   const [itemsToShow, setItemsToShow] = React.useState(3)
+
+  // Fetch videos from API
+  React.useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        const response = await fetch("/api/analytics-videos")
+        if (response.ok) {
+          const data = await response.json()
+          setVideos(data.videos)
+        }
+      } catch (error) {
+        console.error("Error fetching analytics videos:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchVideos()
+  }, [])
 
   // Calculate items to show based on window width
   React.useEffect(() => {
@@ -81,6 +61,17 @@ export function AnalyticsVideos() {
 
   const goToNext = () => {
     setCurrentIndex((prev) => Math.min(maxIndex, prev + 1))
+  }
+
+  if (loading || videos.length === 0) {
+    if (loading) {
+      return (
+        <div className="py-20 flex justify-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+        </div>
+      )
+    }
+    return null
   }
 
   return (
@@ -189,8 +180,8 @@ export function AnalyticsVideos() {
                 key={index}
                 onClick={() => setCurrentIndex(index)}
                 className={`h-1.5 sm:h-2 rounded-full transition-all duration-300 ${index === currentIndex
-                    ? "w-6 sm:w-10 bg-primary"
-                    : "w-1.5 sm:w-2 bg-muted-foreground/20 hover:bg-muted-foreground/40"
+                  ? "w-6 sm:w-10 bg-primary"
+                  : "w-1.5 sm:w-2 bg-muted-foreground/20 hover:bg-muted-foreground/40"
                   }`}
                 aria-label={`Go to slide ${index + 1}`}
               />

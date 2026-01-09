@@ -2,6 +2,7 @@ import { SellChannelForm } from "@/components/sell-channel/sell-channel-form"
 import { SellChannelDetails } from "@/components/sell-channel/sell-channel-details"
 import { FAQ } from "@/components/home/sections/faq"
 import { Info, MessageCircle, CheckCircle2 } from "lucide-react"
+import { WhatsAppSupport } from "./components/whatsapp-support"
 
 export const metadata = {
   title: "Sell Your YouTube Channel | YT SHOP INDIA",
@@ -85,6 +86,9 @@ export default function SellChannelPage() {
 
       {/* FAQ Section */}
       <FAQ />
+
+      {/* WhatsApp Support Widget */}
+      <WhatsAppSupport />
     </main>
   )
 }
