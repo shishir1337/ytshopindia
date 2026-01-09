@@ -418,7 +418,7 @@ export function SellChannelForm() {
           )}
         </Button>
         <p className="text-xs text-center text-muted-foreground mt-3">
-          After submitting the form, our team will contact you shortly.
+          Once you submit the form, our team will contact you shortly.
         </p>
       </div>
     </form>
