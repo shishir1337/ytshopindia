@@ -241,7 +241,7 @@ export default async function ListingDetailsPage({ params }: PageProps) {
                                 <div className="space-y-3">
                                     <DetailItem label="Revenue Sources" value={listing.revenueSources || "N/A"} />
                                     <DetailItem label="Monthly Revenue" value={listing.monthlyRevenue || "N/A"} />
-                                    <DetailItem label="Revenue (28 Days)" value={listing.revenueLast28Days || "N/A"} />
+                                    <DetailItem label="Revenue (90 Days)" value={listing.revenueLast28Days || "N/A"} />
                                     <DetailItem label="Lifetime Revenue" value={listing.lifetimeRevenue || "N/A"} />
                                 </div>
                             </div>
@@ -263,7 +263,11 @@ export default async function ListingDetailsPage({ params }: PageProps) {
                                         value={listing.communityStrike || "None"}
                                         valueClass={listing.communityStrike && listing.communityStrike !== "None" ? "text-red-500" : "text-green-500"}
                                     />
-                                    <DetailItem label="Shorts Views (90 Days)" value={listing.shortsViews90Days || "N/A"} />
+                                    <DetailItem
+                                        label="Warning"
+                                        value={listing.shortsViews90Days || "None"}
+                                        valueClass={listing.shortsViews90Days && listing.shortsViews90Days !== "None" ? "text-red-500" : "text-green-500"}
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -287,7 +291,7 @@ export default async function ListingDetailsPage({ params }: PageProps) {
 
                                 <div className="space-y-3">
                                     <BuyButton listingId={listing.id} />
-                                    
+
                                     <Button asChild size="lg" variant="outline" className="w-full bg-[#25D366] hover:bg-[#20ba59] text-white border-none shadow-lg">
                                         <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
                                             <IconBrandWhatsapp className="size-5 mr-2" />
