@@ -284,7 +284,6 @@ export function SellChannelForm() {
           <SelectContent>
             <SelectItem value="Monetized">Monetized</SelectItem>
             <SelectItem value="Non-Monetized">Non-Monetized</SelectItem>
-            <SelectItem value="Demonetized">Demonetized</SelectItem>
           </SelectContent>
         </Select>
         {errors.monetizationStatus && touched.monetizationStatus && <p className="text-sm text-destructive">{errors.monetizationStatus}</p>}
@@ -307,6 +306,8 @@ export function SellChannelForm() {
             <SelectContent>
               <SelectItem value="₹">₹ (INR)</SelectItem>
               <SelectItem value="$">$ (USD)</SelectItem>
+              <SelectItem value="PKR">PKR (₨)</SelectItem>
+              <SelectItem value="BDT">BDT (৳)</SelectItem>
               <SelectItem value="€">€ (EUR)</SelectItem>
             </SelectContent>
           </Select>

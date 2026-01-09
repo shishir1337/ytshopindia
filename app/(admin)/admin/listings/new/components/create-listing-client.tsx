@@ -352,7 +352,6 @@ export function CreateListingClient() {
                                         <SelectContent>
                                             <SelectItem value="Monetized">Monetized</SelectItem>
                                             <SelectItem value="Non-Monetized">Non-Monetized</SelectItem>
-                                            <SelectItem value="Demonetized">Demonetized</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
@@ -429,6 +428,9 @@ export function CreateListingClient() {
                                         <SelectContent>
                                             <SelectItem value="₹">₹</SelectItem>
                                             <SelectItem value="$">$</SelectItem>
+                                            <SelectItem value="PKR">PKR</SelectItem>
+                                            <SelectItem value="BDT">BDT</SelectItem>
+                                            <SelectItem value="€">€</SelectItem>
                                         </SelectContent>
                                     </Select>
                                     <Input
