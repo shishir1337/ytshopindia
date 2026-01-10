@@ -41,10 +41,10 @@ export default function PaymentPage() {
 
     useEffect(() => {
         fetchOrder()
-        
+
         // Poll payment status every 10 seconds if not paid
         let interval: NodeJS.Timeout | null = null
-        
+
         const startPolling = () => {
             interval = setInterval(() => {
                 if (paymentData && paymentData.status !== "paid" && paymentData.status !== "completed" && paymentData.status !== "expired" && paymentData.status !== "cancelled") {
@@ -75,7 +75,7 @@ export default function PaymentPage() {
             // Try to get email from localStorage (for guest orders)
             const storedEmail = typeof window !== "undefined" ? localStorage.getItem(`order_${orderId}_email`) : null;
             const url = storedEmail ? `/api/orders/${orderId}?email=${encodeURIComponent(storedEmail)}` : `/api/orders/${orderId}`;
-            
+
             const response = await fetch(url)
             const data = await response.json()
 
@@ -123,7 +123,7 @@ export default function PaymentPage() {
             // Get email from localStorage if available
             const storedEmail = typeof window !== "undefined" ? localStorage.getItem(`order_${orderId}_email`) : null;
             const url = storedEmail ? `/api/orders/${orderId}/check-payment?email=${encodeURIComponent(storedEmail)}` : `/api/orders/${orderId}/check-payment`;
-            
+
             const response = await fetch(url, {
                 method: "POST",
             })
@@ -131,7 +131,7 @@ export default function PaymentPage() {
 
             if (data.order) {
                 setPaymentData(data.order)
-                
+
                 if (data.order.status === "paid") {
                     toast.success("Payment confirmed! Redirecting...")
                     setTimeout(() => {
@@ -154,8 +154,8 @@ export default function PaymentPage() {
         toast.success("Copied to clipboard!")
     }
 
-    const formatExpiryTime = (timestamp: number) => {
-        const date = new Date(timestamp * 1000)
+    const formatExpiryTime = (expiry: number | string) => {
+        const date = typeof expiry === 'number' ? new Date(expiry * 1000) : new Date(expiry)
         return date.toLocaleString()
     }
 

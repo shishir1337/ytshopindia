@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
       usdAmount = await convertInrToUsd(originalPrice);
     }
 
-    const formattedAmount = formatAmountForCryptomus(usdAmount);
+    const formattedAmount = formatAmountForCryptomus(Math.max(usdAmount, 0.10));
 
     // Get exchange rate for storage
     const { getUsdToInrRate } = await import("@/lib/exchange-rate");
@@ -155,7 +155,7 @@ export async function POST(request: NextRequest) {
       amount: formattedAmount,
       currency: "USD",
       orderId: order.id,
-      urlReturn: `${baseUrl}/payment/${order.id}`,
+      urlReturn: `${baseUrl}/buy-channel/${listing.id}`,
       urlSuccess: `${baseUrl}/payment/${order.id}?status=success`,
       urlCallback: `${baseUrl}/api/webhooks/cryptomus`,
       lifetime: 60, // 60 minutes
