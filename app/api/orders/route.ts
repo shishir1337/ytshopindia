@@ -118,7 +118,14 @@ export async function POST(request: NextRequest) {
 
     const originalPrice = listing.expectedPrice;
     const originalCurrency = listing.currency || "₹";
-    const usdAmount = await convertInrToUsd(originalPrice);
+
+    let usdAmount: number;
+    if (originalCurrency === "$" || originalCurrency === "USD") {
+      usdAmount = parseFloat(originalPrice.replace(/[^0-9.]/g, ""));
+    } else {
+      usdAmount = await convertInrToUsd(originalPrice);
+    }
+
     const formattedAmount = formatAmountForCryptomus(usdAmount);
 
     // Get exchange rate for storage

@@ -103,7 +103,11 @@ export default function CheckoutPage() {
             }
 
             toast.success("Order created! Redirecting to payment...")
-            router.push(`/payment/${data.order.id}`)
+            if (data.order.paymentUrl) {
+                window.location.href = data.order.paymentUrl
+            } else {
+                router.push(`/payment/${data.order.id}`)
+            }
         } catch (error: any) {
             console.error("Checkout error:", error)
             toast.error("An error occurred. Please try again.")
@@ -162,9 +166,9 @@ export default function CheckoutPage() {
                                 </p>
                             </div>
 
-                            <Button 
-                                type="submit" 
-                                className="w-full" 
+                            <Button
+                                type="submit"
+                                className="w-full"
                                 size="lg"
                                 disabled={loading}
                             >
