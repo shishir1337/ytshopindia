@@ -95,12 +95,12 @@ export function ChannelCard({
     <Link href={`/buy-channel/${id}`}>
       <div className="group relative overflow-hidden rounded-xl border border-border bg-card transition-all duration-300 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5">
         {/* Channel Image with Overlay */}
-        <div className="relative aspect-video w-full overflow-hidden bg-muted">
+        <div className="relative aspect-video w-full overflow-hidden bg-black/90">
           <Image
             src={imageUrl}
             alt={title}
             fill
-            className="object-cover transition-transform duration-500 group-hover:scale-110"
+            className="object-contain transition-transform duration-500 group-hover:scale-105"
             unoptimized={imageUrl.startsWith("/uploads/")}
           />
           {/* Gradient Overlay */}
