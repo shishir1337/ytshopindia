@@ -21,22 +21,22 @@ interface CryptomusInvoiceResponse {
   state: number;
   result: {
     uuid: string;
-    orderId: string;
+    order_id: string;
     amount: string;
-    paymentAmount: string;
-    paymentAmountUsd: string;
+    payment_amount: string;
+    payment_amount_usd: string;
     currency: string;
     network: string;
     address: string;
     from: string;
-    txId: string;
-    paymentStatus: string;
+    txid: string;
+    payment_status: string;
     url: string;
-    expiredAt: number;
+    expired_at: number;
     status: string;
-    isPaymentMultiple: boolean;
-    isFinal: boolean;
-    additionalData: string | null;
+    is_payment_multiple: boolean;
+    is_final: boolean;
+    additional_data: string | null;
     currencies: Array<{
       currency: string;
       network: string;
@@ -51,20 +51,20 @@ interface CryptomusPaymentStatusResponse {
   state: number;
   result: {
     uuid: string;
-    orderId: string;
+    order_id: string;
     amount: string;
-    paymentAmount: string;
-    paymentAmountUsd: string;
+    payment_amount: string;
+    payment_amount_usd: string;
     currency: string;
     network: string;
     address: string;
     from: string;
-    txId: string;
-    paymentStatus: string;
+    txid: string;
+    payment_status: string;
     url: string;
-    expiredAt: number;
+    expired_at: number;
     status: string;
-    isFinal: boolean;
+    is_final: boolean;
   };
 }
 
@@ -96,8 +96,8 @@ export async function createCryptomusInvoice(
     url_success: params.urlSuccess,
     url_callback: params.urlCallback,
     network: params.network,
-    is_payment_multiple: params.isPaymentMultiple || false,
-    lifetime: params.lifetime || 60, // Default 60 minutes
+    is_payment_multiple: params.isPaymentMultiple ?? true,
+    lifetime: (params.lifetime || 60) * 60, // Convert minutes to seconds (default 60 mins)
     to_currency: params.toCurrency,
   };
 

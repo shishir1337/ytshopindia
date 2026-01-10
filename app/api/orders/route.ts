@@ -9,7 +9,7 @@ import { createOrderSchema, validateEmail } from "@/lib/validation";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
+
     // Validate input
     const validationResult = createOrderSchema.safeParse(body);
     if (!validationResult.success) {
@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
     const originalCurrency = listing.currency || "₹";
     const usdAmount = await convertInrToUsd(originalPrice);
     const formattedAmount = formatAmountForCryptomus(usdAmount);
-    
+
     // Get exchange rate for storage
     const { getUsdToInrRate } = await import("@/lib/exchange-rate");
     const exchangeRate = await getUsdToInrRate();
@@ -159,13 +159,13 @@ export async function POST(request: NextRequest) {
       where: { id: order.id },
       data: {
         cryptomusInvoiceId: cryptomusResponse.result.uuid,
-        cryptomusOrderId: cryptomusResponse.result.orderId,
+        cryptomusOrderId: cryptomusResponse.result.order_id,
         cryptomusPaymentUrl: cryptomusResponse.result.url,
         paymentNetwork: cryptomusResponse.result.network,
         paymentAddress: cryptomusResponse.result.address,
-        paymentAmount: cryptomusResponse.result.paymentAmount,
-        paymentStatus: cryptomusResponse.result.paymentStatus,
-        expiresAt: new Date(cryptomusResponse.result.expiredAt * 1000),
+        paymentAmount: cryptomusResponse.result.payment_amount,
+        paymentStatus: cryptomusResponse.result.payment_status,
+        expiresAt: cryptomusResponse.result.expired_at ? new Date(cryptomusResponse.result.expired_at * 1000) : null,
       },
     });
 
@@ -178,8 +178,8 @@ export async function POST(request: NextRequest) {
         currency: "USD",
         paymentAddress: cryptomusResponse.result.address,
         paymentNetwork: cryptomusResponse.result.network,
-        paymentAmount: cryptomusResponse.result.paymentAmount,
-        expiresAt: cryptomusResponse.result.expiredAt,
+        paymentAmount: cryptomusResponse.result.payment_amount,
+        expiresAt: cryptomusResponse.result.expired_at,
       },
     });
   } catch (error: any) {

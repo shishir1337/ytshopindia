@@ -12,7 +12,7 @@ export async function POST(
     const { id } = await params;
     const { searchParams } = new URL(request.url);
     const email = searchParams.get("email"); // For guest order verification
-    
+
     const order = await prisma.order.findUnique({
       where: { id },
     });
@@ -37,18 +37,18 @@ export async function POST(
 
     const { checkOrderAccess } = await import("@/lib/order-access");
     const accessCheck = await checkOrderAccess(id, userId, email || null);
-    
+
     if (!accessCheck.hasAccess) {
       if (!order.userId && order.guestEmail) {
         return NextResponse.json(
-          { 
+          {
             error: "Email verification required",
             requiresEmail: true,
           },
           { status: 403 }
         );
       }
-      
+
       return NextResponse.json(
         { error: accessCheck.reason || "Unauthorized" },
         { status: 403 }
@@ -62,15 +62,15 @@ export async function POST(
     let updatedStatus = order.status;
     let paidAt = order.paidAt;
 
-    if (paymentStatus.result.isFinal) {
-      if (paymentStatus.result.paymentStatus === "paid" || paymentStatus.result.status === "paid") {
+    if (paymentStatus.result.is_final) {
+      if (paymentStatus.result.payment_status === "paid" || paymentStatus.result.status === "paid") {
         updatedStatus = "paid";
         if (!paidAt) {
           paidAt = new Date();
         }
-      } else if (paymentStatus.result.paymentStatus === "expired" || paymentStatus.result.status === "expired") {
+      } else if (paymentStatus.result.payment_status === "expired" || paymentStatus.result.status === "expired") {
         updatedStatus = "expired";
-      } else if (paymentStatus.result.paymentStatus === "cancelled" || paymentStatus.result.status === "cancelled") {
+      } else if (paymentStatus.result.payment_status === "cancelled" || paymentStatus.result.status === "cancelled") {
         updatedStatus = "cancelled";
       }
     }
@@ -79,7 +79,7 @@ export async function POST(
       where: { id },
       data: {
         status: updatedStatus,
-        paymentStatus: paymentStatus.result.paymentStatus,
+        paymentStatus: paymentStatus.result.payment_status,
         paidAt: paidAt,
       },
       include: {
