@@ -230,6 +230,7 @@ export function CreateListingClient() {
                                         variant="outline"
                                         onClick={handleFetchFromYouTube}
                                         disabled={fetchingYoutube || !formData.channelLink}
+                                        title="Fetch channel data from YouTube"
                                     >
                                         {fetchingYoutube ? (
                                             <>
@@ -239,11 +240,14 @@ export function CreateListingClient() {
                                         ) : (
                                             <>
                                                 <Download className="mr-2 size-4" />
-                                                Fetch
+                                                Fetch from YouTube
                                             </>
                                         )}
                                     </Button>
                                 </div>
+                                <p className="mt-1 text-xs text-muted-foreground">
+                                    Click "Fetch from YouTube" to auto-fill: Subscribers, Creation Date, Lifetime Views, Language, Video Count, and Featured Image
+                                </p>
                             </div>
 
                             <div className="grid gap-4 sm:grid-cols-2">
@@ -335,26 +339,303 @@ export function CreateListingClient() {
                                 </div>
 
                                 <div>
-                                    <Label htmlFor="monetizationStatus">Monetization</Label>
-                                    <Select
-                                        value={formData.monetizationStatus}
-                                        onValueChange={(value) =>
+                                    <Label htmlFor="channelType">Channel Type</Label>
+                                    <Input
+                                        id="channelType"
+                                        value={formData.channelType}
+                                        onChange={(e) =>
                                             setFormData((prev) => ({
                                                 ...prev,
-                                                monetizationStatus: value,
-                                                monetized: value.toLowerCase() === "monetized",
+                                                channelType: e.target.value,
                                             }))
                                         }
+                                        placeholder="e.g., Short Videos"
+                                        className="mt-1"
+                                    />
+                                </div>
+
+                                <div>
+                                    <Label htmlFor="contentType">Content Type</Label>
+                                    <Input
+                                        id="contentType"
+                                        value={formData.contentType}
+                                        onChange={(e) =>
+                                            setFormData((prev) => ({
+                                                ...prev,
+                                                contentType: e.target.value,
+                                            }))
+                                        }
+                                        placeholder="e.g., New"
+                                        className="mt-1"
+                                    />
+                                </div>
+
+                                <div>
+                                    <Label htmlFor="viewsLast28Days">Views (Last 28 Days)</Label>
+                                    <Input
+                                        id="viewsLast28Days"
+                                        value={formData.viewsLast28Days}
+                                        onChange={(e) =>
+                                            setFormData((prev) => ({
+                                                ...prev,
+                                                viewsLast28Days: e.target.value,
+                                            }))
+                                        }
+                                        placeholder="e.g., 31+"
+                                        className="mt-1"
+                                    />
+                                </div>
+
+                                <div>
+                                    <Label htmlFor="lifetimeViews">Lifetime Views</Label>
+                                    <Input
+                                        id="lifetimeViews"
+                                        value={formData.lifetimeViews}
+                                        onChange={(e) =>
+                                            setFormData((prev) => ({
+                                                ...prev,
+                                                lifetimeViews: e.target.value,
+                                            }))
+                                        }
+                                        placeholder="e.g., 215K+"
+                                        className="mt-1"
+                                    />
+                                </div>
+
+                                <div>
+                                    <Label htmlFor="copyrightStrike">Copyright Strike</Label>
+                                    <Input
+                                        id="copyrightStrike"
+                                        value={formData.copyrightStrike}
+                                        onChange={(e) =>
+                                            setFormData((prev) => ({
+                                                ...prev,
+                                                copyrightStrike: e.target.value,
+                                            }))
+                                        }
+                                        placeholder="e.g., None"
+                                        className="mt-1"
+                                    />
+                                </div>
+
+                                <div>
+                                    <Label htmlFor="communityStrike">Community Strike</Label>
+                                    <Input
+                                        id="communityStrike"
+                                        value={formData.communityStrike}
+                                        onChange={(e) =>
+                                            setFormData((prev) => ({
+                                                ...prev,
+                                                communityStrike: e.target.value,
+                                            }))
+                                        }
+                                        placeholder="e.g., None"
+                                        className="mt-1"
+                                    />
+                                </div>
+
+                                <div>
+                                    <Label htmlFor="shortsViews90Days">
+                                        Shorts Views (Last 90 Days)
+                                    </Label>
+                                    <Input
+                                        id="shortsViews90Days"
+                                        value={formData.shortsViews90Days}
+                                        onChange={(e) =>
+                                            setFormData((prev) => ({
+                                                ...prev,
+                                                shortsViews90Days: e.target.value,
+                                            }))
+                                        }
+                                        placeholder="e.g., 26+"
+                                        className="mt-1"
+                                    />
+                                </div>
+
+                                <div>
+                                    <Label htmlFor="revenueLast28Days">
+                                        Revenue (Last 28 Days)
+                                    </Label>
+                                    <Input
+                                        id="revenueLast28Days"
+                                        value={formData.revenueLast28Days}
+                                        onChange={(e) =>
+                                            setFormData((prev) => ({
+                                                ...prev,
+                                                revenueLast28Days: e.target.value,
+                                            }))
+                                        }
+                                        placeholder="e.g., Nil"
+                                        className="mt-1"
+                                    />
+                                </div>
+
+                                <div>
+                                    <Label htmlFor="lifetimeRevenue">Lifetime Revenue</Label>
+                                    <Input
+                                        id="lifetimeRevenue"
+                                        value={formData.lifetimeRevenue}
+                                        onChange={(e) =>
+                                            setFormData((prev) => ({
+                                                ...prev,
+                                                lifetimeRevenue: e.target.value,
+                                            }))
+                                        }
+                                        placeholder="e.g., Nil"
+                                        className="mt-1"
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <Label htmlFor="monetizationStatus">
+                                    Monetization Status
+                                </Label>
+                                <Select
+                                    value={formData.monetizationStatus}
+                                    onValueChange={(value) =>
+                                        setFormData((prev) => ({
+                                            ...prev,
+                                            monetizationStatus: value,
+                                            monetized: value.toLowerCase() === "monetized",
+                                        }))
+                                    }
+                                >
+                                    <SelectTrigger id="monetizationStatus" className="mt-1">
+                                        <SelectValue placeholder="Select monetization status" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="Monetized">Monetized</SelectItem>
+                                        <SelectItem value="Non-Monetized">Non-Monetized</SelectItem>
+                                        <SelectItem value="Demonetized">Demonetized</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+
+                        {/* Revenue Information */}
+                        <div className="rounded-lg border border-border bg-card p-6 space-y-4">
+                            <h2 className="text-lg font-semibold text-foreground">
+                                Revenue Information
+                            </h2>
+
+                            <div className="grid gap-4 sm:grid-cols-2">
+                                <div>
+                                    <Label htmlFor="revenueSources">Revenue Sources</Label>
+                                    <Input
+                                        id="revenueSources"
+                                        value={formData.revenueSources}
+                                        onChange={(e) =>
+                                            setFormData((prev) => ({
+                                                ...prev,
+                                                revenueSources: e.target.value,
+                                            }))
+                                        }
+                                        className="mt-1"
+                                    />
+                                </div>
+
+                                <div>
+                                    <Label htmlFor="monthlyRevenue">Monthly Revenue</Label>
+                                    <Input
+                                        id="monthlyRevenue"
+                                        value={formData.monthlyRevenue}
+                                        onChange={(e) =>
+                                            setFormData((prev) => ({
+                                                ...prev,
+                                                monthlyRevenue: e.target.value,
+                                            }))
+                                        }
+                                        className="mt-1"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Sidebar */}
+                    <div className="space-y-6">
+                        {/* Status & Actions */}
+                        <div className="rounded-lg border border-border bg-card p-6 space-y-4">
+                            <h2 className="text-lg font-semibold text-foreground">
+                                Status & Actions
+                            </h2>
+
+                            <div>
+                                <Label htmlFor="status">Status</Label>
+                                <Select
+                                    value={formData.status}
+                                    onValueChange={(value) =>
+                                        setFormData((prev) => ({ ...prev, status: value }))
+                                    }
+                                >
+                                    <SelectTrigger className="mt-1">
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="pending">Pending</SelectItem>
+                                        <SelectItem value="approved">Approved</SelectItem>
+                                        <SelectItem value="sold">Sold</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            <div>
+                                <Label htmlFor="expectedPrice">Expected Price</Label>
+                                <div className="mt-1 flex gap-2">
+                                    <Select
+                                        value={formData.currency}
+                                        onValueChange={(value) =>
+                                            setFormData((prev) => ({ ...prev, currency: value }))
+                                        }
                                     >
-                                        <SelectTrigger className="mt-1">
-                                            <SelectValue placeholder="Select" />
+                                        <SelectTrigger className="w-28">
+                                            <SelectValue />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="Monetized">Monetized</SelectItem>
-                                            <SelectItem value="Non-Monetized">Non-Monetized</SelectItem>
+                                            <SelectItem value="₹">₹ (INR)</SelectItem>
+                                            <SelectItem value="$">$ (USD)</SelectItem>
+                                            <SelectItem value="PKR">PKR (₨)</SelectItem>
+                                            <SelectItem value="BDT">BDT (৳)</SelectItem>
+                                            <SelectItem value="€">€ (EUR)</SelectItem>
                                         </SelectContent>
                                     </Select>
+                                    <Input
+                                        id="expectedPrice"
+                                        value={formData.expectedPrice}
+                                        onChange={(e) =>
+                                            setFormData((prev) => ({
+                                                ...prev,
+                                                expectedPrice: e.target.value,
+                                            }))
+                                        }
+                                        className="flex-1"
+                                    />
                                 </div>
+                            </div>
+                        </div>
+
+                        {/* Images */}
+                        <div className="rounded-lg border border-border bg-card p-6 space-y-4">
+                            <h2 className="text-lg font-semibold text-foreground">Media</h2>
+                            <ImageUpload
+                                value={formData.featuredImage}
+                                onChange={(url) =>
+                                    setFormData((prev) => ({ ...prev, featuredImage: url }))
+                                }
+                                label="Featured Image"
+                                uploadType="listings"
+                            />
+                            <div className="pt-4 border-t border-border">
+                                <MultipleImageUpload
+                                    value={formData.images}
+                                    onChange={(urls) =>
+                                        setFormData((prev) => ({ ...prev, images: urls }))
+                                    }
+                                    label="Additional Images"
+                                    maxImages={10}
+                                    uploadType="listings"
+                                />
                             </div>
                         </div>
 
@@ -363,7 +644,7 @@ export function CreateListingClient() {
                             <h2 className="text-lg font-semibold text-foreground">
                                 Seller Information
                             </h2>
-                            <div className="grid gap-4 sm:grid-cols-2">
+                            <div className="space-y-4">
                                 <div>
                                     <Label htmlFor="sellerName">Name *</Label>
                                     <Input
@@ -389,7 +670,7 @@ export function CreateListingClient() {
                                         className="mt-1"
                                     />
                                 </div>
-                                <div className="sm:col-span-2">
+                                <div>
                                     <Label htmlFor="sellerWhatsapp">WhatsApp *</Label>
                                     <Input
                                         id="sellerWhatsapp"
@@ -403,89 +684,20 @@ export function CreateListingClient() {
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    {/* Sidebar */}
-                    <div className="space-y-6">
-                        {/* Status & Actions */}
+                        {/* Admin Notes */}
                         <div className="rounded-lg border border-border bg-card p-6 space-y-4">
                             <h2 className="text-lg font-semibold text-foreground">
-                                Pricing & Status
+                                Admin Notes
                             </h2>
-
-                            <div>
-                                <Label htmlFor="expectedPrice">Expected Price</Label>
-                                <div className="mt-1 flex gap-2">
-                                    <Select
-                                        value={formData.currency}
-                                        onValueChange={(value) =>
-                                            setFormData((prev) => ({ ...prev, currency: value }))
-                                        }
-                                    >
-                                        <SelectTrigger className="w-24">
-                                            <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="₹">₹</SelectItem>
-                                            <SelectItem value="$">$</SelectItem>
-                                            <SelectItem value="PKR">PKR</SelectItem>
-                                            <SelectItem value="BDT">BDT</SelectItem>
-                                            <SelectItem value="€">€</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                    <Input
-                                        id="expectedPrice"
-                                        value={formData.expectedPrice}
-                                        onChange={(e) =>
-                                            setFormData((prev) => ({
-                                                ...prev,
-                                                expectedPrice: e.target.value,
-                                            }))
-                                        }
-                                        className="flex-1"
-                                    />
-                                </div>
-                            </div>
-
-                            <div>
-                                <Label htmlFor="status">Status</Label>
-                                <Select
-                                    value={formData.status}
-                                    onValueChange={(value) =>
-                                        setFormData((prev) => ({ ...prev, status: value }))
-                                    }
-                                >
-                                    <SelectTrigger className="mt-1">
-                                        <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="approved">Approved</SelectItem>
-                                        <SelectItem value="pending">Pending</SelectItem>
-                                        <SelectItem value="sold">Sold</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </div>
-
-                        {/* Images */}
-                        <div className="rounded-lg border border-border bg-card p-6 space-y-4">
-                            <h2 className="text-lg font-semibold text-foreground">Media</h2>
-                            <ImageUpload
-                                value={formData.featuredImage}
-                                onChange={(url) =>
-                                    setFormData((prev) => ({ ...prev, featuredImage: url }))
+                            <textarea
+                                value={formData.notes}
+                                onChange={(e) =>
+                                    setFormData((prev) => ({ ...prev, notes: e.target.value }))
                                 }
-                                label="Thumbnail"
-                                uploadType="listings"
-                            />
-                            <MultipleImageUpload
-                                value={formData.images}
-                                onChange={(urls) =>
-                                    setFormData((prev) => ({ ...prev, images: urls }))
-                                }
-                                label="Screenshots"
-                                maxImages={10}
-                                uploadType="listings"
+                                rows={4}
+                                placeholder="Internal notes about this listing..."
+                                className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                             />
                         </div>
 

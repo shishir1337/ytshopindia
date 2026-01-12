@@ -16,7 +16,9 @@ import {
 } from "lucide-react";
 import { SignOutButton } from "./sign-out-button";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useTheme } from "next-themes";
+import Image from "next/image";
 
 const navigation = [
   {
@@ -64,6 +66,14 @@ const navigation = [
 export function AdminSidebar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { theme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const logoSrc = mounted && theme === "dark" ? "/logo-dark.svg" : "/logo-light.svg";
 
   return (
     <>
@@ -104,15 +114,14 @@ export function AdminSidebar() {
             className="flex items-center gap-3"
             onClick={() => setMobileMenuOpen(false)}
           >
-            <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-lg shadow-primary/20">
-              <Youtube className="size-5" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-base font-bold text-sidebar-foreground">
-                YT Shop Admin
-              </span>
-              <span className="text-xs text-muted-foreground">Dashboard</span>
-            </div>
+            <Image
+              src={logoSrc}
+              alt="YT Shop India Logo"
+              width={120}
+              height={40}
+              className="h-8 w-auto"
+              priority
+            />
           </Link>
         </div>
 
