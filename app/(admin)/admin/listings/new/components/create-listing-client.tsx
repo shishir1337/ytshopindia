@@ -476,6 +476,7 @@ export function CreateListingClient() {
                                     setFormData((prev) => ({ ...prev, featuredImage: url }))
                                 }
                                 label="Thumbnail"
+                                uploadType="listings"
                             />
                             <MultipleImageUpload
                                 value={formData.images}
@@ -484,6 +485,7 @@ export function CreateListingClient() {
                                 }
                                 label="Screenshots"
                                 maxImages={10}
+                                uploadType="listings"
                             />
                         </div>
 

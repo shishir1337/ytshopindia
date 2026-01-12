@@ -48,15 +48,15 @@ export default function EditBlogPostPage() {
           image: data.post.image || "",
           published: data.post.published,
         });
-              setOriginalSlug(data.post.slug);
-            } else {
-              toast.error("Failed to load post");
-              router.push("/admin/blog");
-            }
-          } catch (error) {
-            console.error("Error fetching post:", error);
-            toast.error("Failed to load post");
-          } finally {
+        setOriginalSlug(data.post.slug);
+      } else {
+        toast.error("Failed to load post");
+        router.push("/admin/blog");
+      }
+    } catch (error) {
+      console.error("Error fetching post:", error);
+      toast.error("Failed to load post");
+    } finally {
       setLoading(false);
     }
   };
@@ -74,7 +74,7 @@ export default function EditBlogPostPage() {
       .replace(/<[^>]*>/g, "")
       .replace(/&nbsp;/g, " ")
       .trim();
-    
+
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength).trim() + "...";
   };
@@ -108,17 +108,17 @@ export default function EditBlogPostPage() {
         body: JSON.stringify(formData),
       });
 
-            if (response.ok) {
-              toast.success("Post updated successfully!");
-              router.push("/admin/blog");
-            } else {
-              const error = await response.json();
-              toast.error(error.error || "Failed to update post");
-            }
-          } catch (error) {
-            console.error("Error updating post:", error);
-            toast.error("Failed to update post");
-          } finally {
+      if (response.ok) {
+        toast.success("Post updated successfully!");
+        router.push("/admin/blog");
+      } else {
+        const error = await response.json();
+        toast.error(error.error || "Failed to update post");
+      }
+    } catch (error) {
+      console.error("Error updating post:", error);
+      toast.error("Failed to update post");
+    } finally {
       setSaving(false);
     }
   };
@@ -274,8 +274,10 @@ export default function EditBlogPostPage() {
               </div>
 
               <ImageUpload
+                label="Featured Image"
                 value={formData.image}
                 onChange={(url) => setFormData((prev) => ({ ...prev, image: url }))}
+                uploadType="blog"
               />
             </div>
 

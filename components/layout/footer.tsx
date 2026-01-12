@@ -153,6 +153,10 @@ export function Footer() {
                   <span>ytshopindia@gmail.com</span>
                 </a>
               </li>
+              <li className="flex items-start gap-2 text-sm text-muted-foreground pt-1">
+                <MapPin className="size-4 shrink-0 mt-0.5" />
+                <span>OFFICE ADRESS - DIVERSION ROAD, MALURGRAM , SILCHAR .. HOUSE NUMBER 24 2ND FLOOR NEAR SADARGHAT BRIDGE</span>
+              </li>
             </ul>
 
             <div className="pt-4 border-t border-t-primary/20">

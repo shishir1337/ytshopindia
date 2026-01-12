@@ -11,13 +11,15 @@ interface MultipleImageUploadProps {
   onChange: (urls: string[]) => void;
   label?: string;
   maxImages?: number;
+  uploadType?: "blog" | "testimonials" | "listings" | "misc";
 }
 
 export function MultipleImageUpload({
   value,
   onChange,
-  label = "Additional Images",
+  label = "Images",
   maxImages = 10,
+  uploadType = "misc",
 }: MultipleImageUploadProps) {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -69,7 +71,7 @@ export function MultipleImageUpload({
         const formData = new FormData();
         formData.append("file", file);
 
-        const response = await fetch("/api/admin/upload", {
+        const response = await fetch(`/api/admin/upload?type=${uploadType}`, {
           method: "POST",
           body: formData,
         });
@@ -126,8 +128,8 @@ export function MultipleImageUpload({
         {uploading
           ? "Uploading..."
           : value.length >= maxImages
-          ? `Maximum ${maxImages} images`
-          : "Upload Images"}
+            ? `Maximum ${maxImages} images`
+            : "Upload Images"}
       </Button>
       <input
         ref={fileInputRef}

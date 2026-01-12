@@ -10,9 +10,15 @@ interface ImageUploadProps {
   value: string;
   onChange: (url: string) => void;
   label?: string;
+  uploadType?: "blog" | "testimonials" | "listings" | "misc";
 }
 
-export function ImageUpload({ value, onChange, label = "Featured Image" }: ImageUploadProps) {
+export function ImageUpload({
+  value,
+  onChange,
+  label = "Image",
+  uploadType = "misc"
+}: ImageUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(value || null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -26,23 +32,23 @@ export function ImageUpload({ value, onChange, label = "Featured Image" }: Image
     const file = e.target.files?.[0];
     if (!file) return;
 
-          // Validate file type
-          const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"];
-          if (!allowedTypes.includes(file.type)) {
-            toast.error("Invalid file type", {
-              description: "Please upload an image (JPEG, PNG, WebP, or GIF).",
-            });
-            return;
-          }
+    // Validate file type
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Invalid file type", {
+        description: "Please upload an image (JPEG, PNG, WebP, or GIF).",
+      });
+      return;
+    }
 
-          // Validate file size (max 5MB)
-          const maxSize = 5 * 1024 * 1024; // 5MB
-          if (file.size > maxSize) {
-            toast.error("File too large", {
-              description: "File size exceeds 5MB limit. Please choose a smaller image.",
-            });
-            return;
-          }
+    // Validate file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      toast.error("File too large", {
+        description: "File size exceeds 5MB limit. Please choose a smaller image.",
+      });
+      return;
+    }
 
     // Show preview
     const reader = new FileReader();
@@ -57,26 +63,26 @@ export function ImageUpload({ value, onChange, label = "Featured Image" }: Image
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await fetch("/api/admin/upload", {
+      const response = await fetch(`/api/admin/upload?type=${uploadType}`, {
         method: "POST",
         body: formData,
       });
 
       if (response.ok) {
         const data = await response.json();
-              onChange(data.url);
-              setPreview(data.url);
-              toast.success("Image uploaded successfully");
-            } else {
-              const error = await response.json();
-              toast.error(error.error || "Failed to upload image");
-              setPreview(null);
-            }
-          } catch (error) {
-            console.error("Error uploading image:", error);
-            toast.error("Failed to upload image");
-            setPreview(null);
-          } finally {
+        onChange(data.url);
+        setPreview(data.url);
+        toast.success("Image uploaded successfully");
+      } else {
+        const error = await response.json();
+        toast.error(error.error || "Failed to upload image");
+        setPreview(null);
+      }
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      toast.error("Failed to upload image");
+      setPreview(null);
+    } finally {
       setUploading(false);
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
@@ -96,7 +102,7 @@ export function ImageUpload({ value, onChange, label = "Featured Image" }: Image
   return (
     <div className="space-y-2">
       <Label>{label}</Label>
-      
+
       {/* Upload Button */}
       <div className="flex items-center gap-2">
         <Button

@@ -109,6 +109,24 @@ export default async function ContactPage() {
                             </CardContent>
                         </Card>
 
+                        {/* Address Card */}
+                        <Card className="border-border shadow-sm hover:border-primary/50 transition-colors md:col-span-2 lg:col-span-1">
+                            <CardContent className="p-8 flex flex-col items-center text-center space-y-4">
+                                <div className="p-3 bg-primary/10 rounded-xl text-primary">
+                                    <MapPin className="size-6" />
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-bold mb-2">Visit Our Office</h3>
+                                    <p className="text-sm text-muted-foreground mb-4">
+                                        Drop by for a coffee and chat.
+                                    </p>
+                                    <p className="text-muted-foreground font-medium">
+                                        OFFICE ADRESS - DIVERSION ROAD, MALURGRAM , SILCHAR .. HOUSE NUMBER 24 2ND FLOOR NEAR SADARGHAT BRIDGE
+                                    </p>
+                                </div>
+                            </CardContent>
+                        </Card>
+
                         {/* FAQ Link Card */}
                         <div className="md:col-span-2 lg:col-span-2">
                             <Card className="bg-primary/5 border-primary/10">

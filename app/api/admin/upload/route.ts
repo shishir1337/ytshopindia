@@ -46,13 +46,19 @@ export async function POST(request: Request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
+    // Get upload type from search params
+    const { searchParams } = new URL(request.url);
+    const type = searchParams.get("type") || "misc";
+    const allowedFolders = ["blog", "testimonials", "listings", "misc"];
+    const folder = allowedFolders.includes(type) ? type : "misc";
+
     // Generate unique filename
     const timestamp = Date.now();
     const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
     const filename = `${timestamp}_${sanitizedName}`;
 
     // Create uploads directory if it doesn't exist
-    const uploadsDir = join(process.cwd(), "public", "uploads", "blog");
+    const uploadsDir = join(process.cwd(), "public", "uploads", folder);
     if (!existsSync(uploadsDir)) {
       mkdirSync(uploadsDir, { recursive: true });
     }
@@ -62,7 +68,7 @@ export async function POST(request: Request) {
     await writeFile(filepath, buffer);
 
     // Return public URL
-    const url = `/uploads/blog/${filename}`;
+    const url = `/uploads/${folder}/${filename}`;
 
     return NextResponse.json({ url, filename });
   } catch (error: any) {

@@ -12,6 +12,7 @@ import {
   X,
   User,
   ShoppingBag,
+  Quote,
 } from "lucide-react";
 import { SignOutButton } from "./sign-out-button";
 import { Button } from "@/components/ui/button";
@@ -47,6 +48,11 @@ const navigation = [
     name: "Analytics Videos",
     href: "/admin/analytics-videos",
     icon: Youtube,
+  },
+  {
+    name: "Testimonials",
+    href: "/admin/testimonials",
+    icon: Quote,
   },
   {
     name: "Users",

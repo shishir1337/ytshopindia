@@ -37,7 +37,7 @@ export default function NewBlogPostPage() {
       .replace(/<[^>]*>/g, "")
       .replace(/&nbsp;/g, " ")
       .trim();
-    
+
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength).trim() + "...";
   };
@@ -72,16 +72,16 @@ export default function NewBlogPostPage() {
 
       if (response.ok) {
         const data = await response.json();
-              toast.success("Blog post created successfully!");
-              router.push(`/admin/blog/${data.post.id}/edit`);
-            } else {
-              const error = await response.json();
-              toast.error(error.error || "Failed to create post");
-            }
-          } catch (error) {
-            console.error("Error creating post:", error);
-            toast.error("Failed to create post");
-          } finally {
+        toast.success("Blog post created successfully!");
+        router.push(`/admin/blog/${data.post.id}/edit`);
+      } else {
+        const error = await response.json();
+        toast.error(error.error || "Failed to create post");
+      }
+    } catch (error) {
+      console.error("Error creating post:", error);
+      toast.error("Failed to create post");
+    } finally {
       setLoading(false);
     }
   };
@@ -204,8 +204,10 @@ export default function NewBlogPostPage() {
           <div className="space-y-6">
             <div className="rounded-lg border border-border bg-card p-6 space-y-4">
               <ImageUpload
+                label="Featured Image"
                 value={formData.image}
                 onChange={(url) => setFormData((prev) => ({ ...prev, image: url }))}
+                uploadType="blog"
               />
             </div>
 

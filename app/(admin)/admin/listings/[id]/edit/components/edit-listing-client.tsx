@@ -780,6 +780,7 @@ export function EditListingClient({ listing: initialListing }: EditListingClient
                   setFormData((prev) => ({ ...prev, featuredImage: url }))
                 }
                 label="Featured Image"
+                uploadType="listings"
               />
               <div className="pt-4 border-t border-border">
                 <MultipleImageUpload
@@ -789,6 +790,7 @@ export function EditListingClient({ listing: initialListing }: EditListingClient
                   }
                   label="Additional Images"
                   maxImages={10}
+                  uploadType="listings"
                 />
               </div>
             </div>

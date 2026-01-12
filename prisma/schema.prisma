@@ -257,3 +257,17 @@ model AnalyticsVideo {
 
   @@map("analytics_videos")
 }
+
+model Testimonial {
+  id          String   @id @default(cuid())
+  quote       String   @db.Text
+  name        String
+  designation String
+  src         String   // Image URL
+  active      Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("testimonials")
+}

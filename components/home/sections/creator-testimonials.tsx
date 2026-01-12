@@ -1,6 +1,7 @@
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials"
+import { prisma } from "@/lib/prisma"
 
-const testimonials = [
+const dummyTestimonials = [
   {
     quote:
       "YT SHOP INDIA made selling my channel incredibly easy. The process was smooth, and I got a fair price for my 50K subscriber channel. Highly recommended!",
@@ -45,7 +46,14 @@ const testimonials = [
   },
 ]
 
-export function CreatorTestimonials() {
+export async function CreatorTestimonials() {
+  const dbTestimonials = await prisma.testimonial.findMany({
+    where: { active: true },
+    orderBy: { order: "asc" },
+  })
+
+  const testimonials = dbTestimonials.length > 0 ? dbTestimonials : dummyTestimonials
+
   return (
     <section className="py-12 sm:py-16 lg:py-20 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
