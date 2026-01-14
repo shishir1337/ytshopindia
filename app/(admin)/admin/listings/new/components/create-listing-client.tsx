@@ -436,7 +436,7 @@ export function CreateListingClient() {
 
                                 <div>
                                     <Label htmlFor="shortsViews90Days">
-                                        Shorts Views (Last 90 Days)
+                                        Warning
                                     </Label>
                                     <Input
                                         id="shortsViews90Days"
@@ -447,7 +447,7 @@ export function CreateListingClient() {
                                                 shortsViews90Days: e.target.value,
                                             }))
                                         }
-                                        placeholder="e.g., 26+"
+                                        placeholder="e.g., None"
                                         className="mt-1"
                                     />
                                 </div>

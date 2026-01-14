@@ -419,7 +419,7 @@ export function SellChannelForm() {
           )}
         </Button>
         <p className="text-xs text-center text-muted-foreground mt-3">
-          Once you submit the form, our team will contact you shortly.
+          Note: For verification and listing on our platform, sellers are required to grant us YouTube Channel Manager access. We do not request ownership access, and your channel remains fully under your control.
         </p>
       </div>
     </form>
