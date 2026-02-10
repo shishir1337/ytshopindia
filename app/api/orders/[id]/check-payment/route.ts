@@ -26,33 +26,38 @@ export async function POST(
 
     // Check if user has access to this order
     let userId: string | null = null;
+    let isAdmin = false;
     try {
       const session = await auth.api.getSession({
         headers: await headers(),
       });
       userId = session?.user?.id || null;
+      isAdmin = session?.user?.role === "admin";
     } catch (error) {
       // Not logged in
     }
 
-    const { checkOrderAccess } = await import("@/lib/order-access");
-    const accessCheck = await checkOrderAccess(id, userId, email || null);
+    // Admins can view any order
+    if (!isAdmin) {
+      const { checkOrderAccess } = await import("@/lib/order-access");
+      const accessCheck = await checkOrderAccess(id, userId, email || null);
 
-    if (!accessCheck.hasAccess) {
-      if (!order.userId && order.guestEmail) {
+      if (!accessCheck.hasAccess) {
+        if (!order.userId && order.guestEmail) {
+          return NextResponse.json(
+            {
+              error: "Email verification required",
+              requiresEmail: true,
+            },
+            { status: 403 }
+          );
+        }
+
         return NextResponse.json(
-          {
-            error: "Email verification required",
-            requiresEmail: true,
-          },
+          { error: accessCheck.reason || "Unauthorized" },
           { status: 403 }
         );
       }
-
-      return NextResponse.json(
-        { error: accessCheck.reason || "Unauthorized" },
-        { status: 403 }
-      );
     }
 
     // Get payment status from Cryptomus
