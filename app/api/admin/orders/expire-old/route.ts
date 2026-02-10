@@ -17,10 +17,10 @@ export async function POST(request: Request) {
     const now = new Date();
     const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000); // 1 hour ago (matches Cryptomus invoice lifetime)
 
-    // Find all pending orders that have expired
-    // Either they have an expiresAt that's passed, or they're older than 1 hour without expiresAt
+    // Find all expired pending GUEST orders only (spammers typically don't register)
     const expiredOrders = await prisma.order.findMany({
       where: {
+        userId: null,
         status: "pending",
         OR: [
           {

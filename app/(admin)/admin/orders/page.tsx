@@ -17,9 +17,10 @@ export default async function OrdersPage() {
   const now = new Date();
   const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000); // 1 hour ago (matches Cryptomus invoice lifetime)
   
-  // Expire orders that have passed their expiration time OR are older than 1 hour without expiresAt
+  // Expire only GUEST orders (spammers typically don't register) - registered users' orders stay pending
   await prisma.order.updateMany({
     where: {
+      userId: null,
       status: "pending",
       OR: [
         {

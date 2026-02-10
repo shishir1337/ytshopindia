@@ -161,17 +161,29 @@ export async function getCryptomusPaymentStatus(
 
 /**
  * Verify webhook signature from Cryptomus
+ * Per Cryptomus docs: extract sign from body, remove it, then compute
+ * md5(base64(json_encode(data)) + apiKey). The sign is in the webhook body, not headers.
  */
-export function verifyCryptomusWebhook(
-  payload: string,
-  signature: string
-): boolean {
+export function verifyCryptomusWebhook(body: string): boolean {
   if (!CRYPTOMUS_PAYMENT_API_KEY) {
     return false;
   }
 
-  const expectedSignature = generateSignature(payload, CRYPTOMUS_PAYMENT_API_KEY);
-  return expectedSignature === signature;
+  try {
+    const data = JSON.parse(body) as Record<string, unknown>;
+    const receivedSign = data.sign;
+    if (typeof receivedSign !== "string") {
+      return false;
+    }
+
+    // Cryptomus computes the sign over the payload WITHOUT the sign field
+    delete data.sign;
+    const payloadForSigning = JSON.stringify(data);
+    const expectedSignature = generateSignature(payloadForSigning, CRYPTOMUS_PAYMENT_API_KEY);
+    return expectedSignature === receivedSign;
+  } catch {
+    return false;
+  }
 }
 
 /**

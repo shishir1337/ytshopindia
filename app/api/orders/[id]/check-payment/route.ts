@@ -61,16 +61,18 @@ export async function POST(
     // Update order based on payment status
     let updatedStatus = order.status;
     let paidAt = order.paidAt;
+    const cryptomusStatus =
+      paymentStatus.result.payment_status || paymentStatus.result.status;
 
     if (paymentStatus.result.is_final) {
-      if (paymentStatus.result.payment_status === "paid" || paymentStatus.result.status === "paid") {
+      if (cryptomusStatus === "paid" || cryptomusStatus === "paid_over") {
         updatedStatus = "paid";
         if (!paidAt) {
           paidAt = new Date();
         }
-      } else if (paymentStatus.result.payment_status === "expired" || paymentStatus.result.status === "expired") {
+      } else if (cryptomusStatus === "expired") {
         updatedStatus = "expired";
-      } else if (paymentStatus.result.payment_status === "cancelled" || paymentStatus.result.status === "cancelled") {
+      } else if (cryptomusStatus === "cancelled" || cryptomusStatus === "cancel") {
         updatedStatus = "cancelled";
       }
     }
@@ -79,7 +81,7 @@ export async function POST(
       where: { id },
       data: {
         status: updatedStatus,
-        paymentStatus: paymentStatus.result.payment_status,
+        paymentStatus: cryptomusStatus,
         paidAt: paidAt,
       },
       include: {

@@ -6,10 +6,9 @@ import { sendOrderConfirmationEmail, sendOrderCompletedEmail, sendOrderPaymentAd
 export async function POST(request: NextRequest) {
   try {
     const body = await request.text();
-    const signature = request.headers.get("sign") || "";
 
-    // Verify webhook signature
-    if (!verifyCryptomusWebhook(body, signature)) {
+    // Verify webhook signature (sign is in body per Cryptomus docs)
+    if (!verifyCryptomusWebhook(body)) {
       console.error("Invalid webhook signature");
       return NextResponse.json(
         { error: "Invalid signature" },
@@ -58,7 +57,11 @@ export async function POST(request: NextRequest) {
     let updatedStatus = order.status;
     let paidAt = order.paidAt;
 
-    if (payment_status === "paid" || status === "paid") {
+    const cryptomusStatus = payment_status || status;
+    const isPaid =
+      cryptomusStatus === "paid" || cryptomusStatus === "paid_over";
+
+    if (isPaid) {
       updatedStatus = "paid";
       if (!paidAt) {
         paidAt = new Date();
@@ -101,9 +104,9 @@ export async function POST(request: NextRequest) {
         console.error("Failed to send admin order payment notification:", error);
         // Don't fail the request if email fails
       });
-    } else if (payment_status === "expired" || status === "expired") {
+    } else if (cryptomusStatus === "expired") {
       updatedStatus = "expired";
-    } else if (payment_status === "cancelled" || status === "cancelled") {
+    } else if (cryptomusStatus === "cancelled" || cryptomusStatus === "cancel") {
       updatedStatus = "cancelled";
     }
 
@@ -112,7 +115,7 @@ export async function POST(request: NextRequest) {
       where: { id: order.id },
       data: {
         status: updatedStatus,
-        paymentStatus: payment_status || status,
+        paymentStatus: cryptomusStatus,
         paidAt: paidAt,
       },
     });
