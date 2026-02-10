@@ -15,23 +15,32 @@ export async function POST(request: Request) {
     }
 
     const now = new Date();
-    const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000); // 1 hour ago (matches Cryptomus invoice lifetime)
+    const gracePeriodMinutes = 30; // 30 minutes grace period after Cryptomus expiration
+    const gracePeriodMs = gracePeriodMinutes * 60 * 1000;
+    const oneAndHalfHoursAgo = new Date(now.getTime() - 90 * 60 * 1000); // 1.5 hours ago (fallback for orders without expiresAt)
 
     // Find all expired pending GUEST orders only (spammers typically don't register)
+    // Logic: 
+    // 1. If expiresAt exists: expire at expiresAt + 30 minutes (Cryptomus expires at 60min, we expire at 90min)
+    // 2. If expiresAt is null: expire at createdAt + 90 minutes (fallback)
+    // This gives customers 30 minutes grace period after Cryptomus payment link expires
     const expiredOrders = await prisma.order.findMany({
       where: {
         userId: null,
         status: "pending",
         OR: [
           {
+            // Orders with expiresAt: expire after grace period (expiresAt + 30 minutes)
             expiresAt: {
-              lt: now, // Less than current time = expired
+              not: null,
+              lt: new Date(now.getTime() - gracePeriodMs), // expiresAt was more than 30 minutes ago
             },
           },
           {
+            // Orders without expiresAt: expire after 90 minutes from creation (fallback)
             expiresAt: null,
             createdAt: {
-              lt: oneHourAgo, // Older than 1 hour without expiration date (matches invoice lifetime)
+              lt: oneAndHalfHoursAgo,
             },
           },
         ],
