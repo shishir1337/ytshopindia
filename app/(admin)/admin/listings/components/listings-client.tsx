@@ -36,11 +36,10 @@ function ListingsContent({
   const [listings, setListings] = useState<Listing[]>(initialListings);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState(initialStatus);
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   const handleFilterChange = (status: string) => {
     setFilterStatus(status);
-    // Use router.replace for instant navigation without scroll to top
     startTransition(() => {
       const params = new URLSearchParams(searchParams.toString());
       if (status === "all") {
@@ -49,6 +48,7 @@ function ListingsContent({
         params.set("status", status);
       }
       router.replace(`/admin/listings?${params.toString()}`);
+      router.refresh();
     });
   };
 
@@ -105,9 +105,10 @@ function ListingsContent({
 }
 
 export function ListingsClient(props: ListingsClientProps) {
+  // Key by status so when filter changes and router.refresh() updates props, component remounts with correct listings
   return (
     <Suspense fallback={<ListingsTableSkeleton />}>
-      <ListingsContent {...props} />
+      <ListingsContent key={props.initialStatus} {...props} />
     </Suspense>
   );
 }

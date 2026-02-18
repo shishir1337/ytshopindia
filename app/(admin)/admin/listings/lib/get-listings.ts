@@ -17,7 +17,7 @@ export interface Listing {
 }
 
 export async function getListings(status?: string): Promise<Listing[]> {
-  const where: any = {};
+  const where: any = { deletedAt: null };
   if (status && status !== "all") {
     where.status = status;
   }

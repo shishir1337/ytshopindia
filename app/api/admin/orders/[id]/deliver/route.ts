@@ -98,6 +98,7 @@ export async function POST(
       await sendOrderDeliveredEmail({
         to: customerEmail,
         orderId: order.id,
+        orderNumber: order.orderNumber,
         channelTitle: order.channelListing.title,
         deliveryDetails,
         customerName,

@@ -53,7 +53,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Update order status based on payment status
+    // Update order status based on payment status; never overwrite delivered/completed
+    const alreadyDeliveredOrCompleted =
+      order.status === "delivered" || order.status === "completed";
+
     let updatedStatus = order.status;
     let paidAt = order.paidAt;
 
@@ -61,39 +64,42 @@ export async function POST(request: NextRequest) {
     const isPaid =
       cryptomusStatus === "paid" || cryptomusStatus === "paid_over";
 
-    if (isPaid) {
+    if (alreadyDeliveredOrCompleted) {
+      // Leave status unchanged; do not send emails or mark sold again
+      updatedStatus = order.status;
+    } else if (isPaid) {
       updatedStatus = "paid";
       if (!paidAt) {
         paidAt = new Date();
       }
 
-      // Send confirmation emails
+      // Send confirmation emails only when transitioning to paid (not when already delivered)
       const customerEmail = order.user?.email || order.guestEmail;
       const customerName = order.user?.name || order.guestName || "Customer";
 
       if (customerEmail) {
-        // Send order confirmation email
         await sendOrderConfirmationEmail({
           to: customerEmail,
           orderId: order.id,
+          orderNumber: order.orderNumber,
           channelTitle: order.channelListing.title,
           amount: order.amount,
           currency: order.currency,
           customerName,
         });
 
-        // Send order completed email (payment confirmed)
         await sendOrderCompletedEmail({
           to: customerEmail,
           orderId: order.id,
+          orderNumber: order.orderNumber,
           channelTitle: order.channelListing.title,
           customerName,
         });
       }
 
-      // Send admin notification email (non-blocking)
       await sendOrderPaymentAdminNotification({
         orderId: order.id,
+        orderNumber: order.orderNumber,
         channelTitle: order.channelListing.title,
         amount: order.amount,
         currency: order.currency,
@@ -102,7 +108,6 @@ export async function POST(request: NextRequest) {
         isGuest: !order.userId,
       }).catch((error) => {
         console.error("Failed to send admin order payment notification:", error);
-        // Don't fail the request if email fails
       });
     } else if (cryptomusStatus === "expired") {
       updatedStatus = "expired";
@@ -110,7 +115,6 @@ export async function POST(request: NextRequest) {
       updatedStatus = "cancelled";
     }
 
-    // Update order
     await prisma.order.update({
       where: { id: order.id },
       data: {
@@ -120,28 +124,26 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // If payment is confirmed, mark channel as sold
-    if (updatedStatus === "paid") {
+    if (updatedStatus === "paid" && !alreadyDeliveredOrCompleted) {
       await prisma.channelListing.update({
         where: { id: order.channelListingId },
-        data: {
-          status: "sold",
-        },
+        data: { status: "sold" },
       });
     }
 
     return NextResponse.json({ success: true, status: updatedStatus });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Webhook error:", error);
+    const message = error instanceof Error ? error.message : "Webhook processing failed";
     return NextResponse.json(
-      { error: error.message || "Webhook processing failed" },
+      { error: message },
       { status: 500 }
     );
   }
 }
 
 // Allow GET for webhook verification (if needed by Cryptomus)
-export async function GET(request: NextRequest) {
+export async function GET() {
   // Return minimal response to avoid information disclosure
   return NextResponse.json({ status: "ok" }, { status: 200 });
 }

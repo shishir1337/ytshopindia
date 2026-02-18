@@ -2,14 +2,10 @@ import Link from "next/link";
 import {
   FileText,
   Youtube,
-  TrendingUp,
-  TrendingDown,
   Calendar,
   Clock,
   Plus,
   ArrowRight,
-  CheckCircle2,
-  XCircle,
   AlertCircle,
   ShoppingBag,
   DollarSign,
@@ -89,7 +85,7 @@ export default async function AdminDashboardPage() {
             Dashboard Overview
           </h1>
           <p className="mt-1 sm:mt-2 text-sm text-muted-foreground">
-            Welcome back! Here's what's happening with your platform today.
+            Welcome back! Here&apos;s what&apos;s happening with your platform today.
           </p>
         </div>
         <div className="flex gap-2">
@@ -334,6 +330,7 @@ export default async function AdminDashboardPage() {
                           </Badge>
                         </div>
                         <div className="flex items-center gap-2 sm:gap-4 text-xs text-muted-foreground flex-wrap">
+                          <span>Order #{order.orderNumber ?? order.id.slice(0, 8)}</span>
                           <span className="flex items-center gap-1">
                             <DollarSign className="size-3" />
                             {order.currency} {order.amount}

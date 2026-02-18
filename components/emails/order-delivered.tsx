@@ -2,6 +2,7 @@ import * as React from "react";
 
 interface OrderDeliveredEmailProps {
   orderId: string;
+  orderNumber?: number | null;
   channelTitle: string;
   deliveryDetails: string;
   customerName: string;
@@ -9,10 +10,12 @@ interface OrderDeliveredEmailProps {
 
 export function OrderDeliveredEmail({
   orderId,
+  orderNumber,
   channelTitle,
   deliveryDetails,
   customerName,
 }: OrderDeliveredEmailProps) {
+  const orderDisplay = orderNumber != null ? `#${orderNumber}` : orderId;
   return (
     <div style={{ fontFamily: "system-ui, -apple-system, sans-serif", maxWidth: "600px", margin: "0 auto", padding: "20px" }}>
       <div style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "24px" }}>
@@ -35,7 +38,7 @@ export function OrderDeliveredEmail({
           <div>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
               <span style={{ color: "#166534", fontSize: "14px" }}>Order ID:</span>
-              <span style={{ color: "#166534", fontSize: "14px", fontWeight: "600" }}>{orderId}</span>
+              <span style={{ color: "#166534", fontSize: "14px", fontWeight: "600" }}>{orderDisplay}</span>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
               <span style={{ color: "#166534", fontSize: "14px" }}>Channel:</span>
@@ -75,7 +78,7 @@ export function OrderDeliveredEmail({
         
         <div style={{ marginTop: "24px", paddingTop: "24px", borderTop: "1px solid #e5e7eb" }}>
           <p style={{ color: "#6b7280", fontSize: "14px", lineHeight: "20px", margin: "0" }}>
-            If you have any questions or concerns, please don't hesitate to reach out to our support team.
+            If you have any questions or concerns, please don&apos;t hesitate to reach out to our support team.
           </p>
         </div>
       </div>

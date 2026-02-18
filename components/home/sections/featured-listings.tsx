@@ -9,6 +9,7 @@ async function getFeaturedListings() {
     const listings = await prisma.channelListing.findMany({
       where: {
         status: "approved",
+        deletedAt: null,
       },
       select: {
         id: true,

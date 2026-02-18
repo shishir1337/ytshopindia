@@ -18,9 +18,9 @@ export async function getDashboardData() {
     prisma.blogPost.count(),
     prisma.blogPost.count({ where: { published: true } }),
     prisma.blogPost.count({ where: { published: false } }),
-    prisma.channelListing.count(),
-    prisma.channelListing.count({ where: { status: "pending" } }),
-    prisma.channelListing.count({ where: { status: "approved" } }),
+    prisma.channelListing.count({ where: { deletedAt: null } }),
+    prisma.channelListing.count({ where: { status: "pending", deletedAt: null } }),
+    prisma.channelListing.count({ where: { status: "approved", deletedAt: null } }),
     prisma.order.count(),
     prisma.order.count({ where: { status: "pending" } }),
     prisma.order.count({ where: { status: "paid" } }),
@@ -37,6 +37,7 @@ export async function getDashboardData() {
       },
     }),
     prisma.channelListing.findMany({
+      where: { deletedAt: null },
       take: 5,
       orderBy: { createdAt: "desc" },
       select: {

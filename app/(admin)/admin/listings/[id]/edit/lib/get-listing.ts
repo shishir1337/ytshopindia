@@ -5,7 +5,7 @@ export async function getListingById(id: string) {
     where: { id },
   });
 
-  if (!listing) {
+  if (!listing || listing.deletedAt) {
     return null;
   }
 

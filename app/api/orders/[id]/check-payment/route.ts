@@ -62,44 +62,72 @@ export async function POST(
 
     // Get payment status from Cryptomus
     const paymentStatus = await getCryptomusPaymentStatus(order.cryptomusOrderId);
-
-    // Update order based on payment status
-    let updatedStatus = order.status;
-    let paidAt = order.paidAt;
     const cryptomusStatus =
       paymentStatus.result.payment_status || paymentStatus.result.status;
 
-    if (paymentStatus.result.is_final) {
-      if (cryptomusStatus === "paid" || cryptomusStatus === "paid_over") {
-        updatedStatus = "paid";
-        if (!paidAt) {
-          paidAt = new Date();
-        }
-      } else if (cryptomusStatus === "expired") {
-        updatedStatus = "expired";
-      } else if (cryptomusStatus === "cancelled" || cryptomusStatus === "cancel") {
-        updatedStatus = "cancelled";
-      }
-    }
+    // Do not overwrite delivered/completed with payment status (prevents revert)
+    const alreadyDeliveredOrCompleted =
+      order.status === "delivered" || order.status === "completed";
 
-    const updatedOrder = await prisma.order.update({
-      where: { id },
-      data: {
-        status: updatedStatus,
-        paymentStatus: cryptomusStatus,
-        paidAt: paidAt,
-      },
-      include: {
-        channelListing: {
-          select: {
-            id: true,
-            title: true,
-            featuredImage: true,
-            listingId: true,
+    let updatedOrder;
+    if (alreadyDeliveredOrCompleted) {
+      // Return current order without persisting payment status over delivery state
+      const current = await prisma.order.findUnique({
+        where: { id },
+        include: {
+          channelListing: {
+            select: {
+              id: true,
+              title: true,
+              featuredImage: true,
+              listingId: true,
+            },
           },
         },
-      },
-    });
+      });
+      if (!current) {
+        return NextResponse.json(
+          { error: "Order not found" },
+          { status: 404 }
+        );
+      }
+      updatedOrder = current;
+    } else {
+      let updatedStatus = order.status;
+      let paidAt = order.paidAt;
+
+      if (paymentStatus.result.is_final) {
+        if (cryptomusStatus === "paid" || cryptomusStatus === "paid_over") {
+          updatedStatus = "paid";
+          if (!paidAt) {
+            paidAt = new Date();
+          }
+        } else if (cryptomusStatus === "expired") {
+          updatedStatus = "expired";
+        } else if (cryptomusStatus === "cancelled" || cryptomusStatus === "cancel") {
+          updatedStatus = "cancelled";
+        }
+      }
+
+      updatedOrder = await prisma.order.update({
+        where: { id },
+        data: {
+          status: updatedStatus,
+          paymentStatus: cryptomusStatus,
+          paidAt: paidAt,
+        },
+        include: {
+          channelListing: {
+            select: {
+              id: true,
+              title: true,
+              featuredImage: true,
+              listingId: true,
+            },
+          },
+        },
+      });
+    }
 
     return NextResponse.json({ order: updatedOrder });
   } catch (error: any) {

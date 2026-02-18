@@ -53,6 +53,7 @@ async function getListings(params: { [key: string]: string | string[] | undefine
         // Build where clause
         const where: Record<string, unknown> = {
             status: "approved",
+            deletedAt: null,
         }
 
         // Monetization filter

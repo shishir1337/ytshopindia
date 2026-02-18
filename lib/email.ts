@@ -142,6 +142,7 @@ export async function sendPasswordResetEmail(
 interface OrderConfirmationEmailData {
   to: string;
   orderId: string;
+  orderNumber?: number | null;
   channelTitle: string;
   amount: string;
   currency: string;
@@ -151,6 +152,7 @@ interface OrderConfirmationEmailData {
 interface OrderCompletedEmailData {
   to: string;
   orderId: string;
+  orderNumber?: number | null;
   channelTitle: string;
   customerName: string;
 }
@@ -162,6 +164,7 @@ export async function sendOrderConfirmationEmail(
     const emailHtml = await render(
       OrderConfirmationEmail({
         orderId: data.orderId,
+        orderNumber: data.orderNumber,
         channelTitle: data.channelTitle,
         amount: data.amount,
         currency: data.currency,
@@ -195,15 +198,17 @@ export async function sendOrderCompletedEmail(
     const emailHtml = await render(
       OrderCompletedEmail({
         orderId: data.orderId,
+        orderNumber: data.orderNumber,
         channelTitle: data.channelTitle,
         customerName: data.customerName,
       })
     );
     
+    const orderDisplay = data.orderNumber != null ? `#${data.orderNumber}` : data.orderId;
     const { error } = await resend.emails.send({
       from: FROM_EMAIL,
       to: [data.to],
-      subject: `Payment Confirmed - Order #${data.orderId} | YT Shop India`,
+      subject: `Payment Confirmed - Order ${orderDisplay} | YT Shop India`,
       html: emailHtml,
     });
 
@@ -222,6 +227,7 @@ export async function sendOrderCompletedEmail(
 interface OrderDeliveredEmailData {
   to: string;
   orderId: string;
+  orderNumber?: number | null;
   channelTitle: string;
   deliveryDetails: string;
   customerName: string;
@@ -234,6 +240,7 @@ export async function sendOrderDeliveredEmail(
     const emailHtml = await render(
       OrderDeliveredEmail({
         orderId: data.orderId,
+        orderNumber: data.orderNumber,
         channelTitle: data.channelTitle,
         deliveryDetails: data.deliveryDetails,
         customerName: data.customerName,
@@ -261,6 +268,7 @@ export async function sendOrderDeliveredEmail(
 
 interface OrderPaymentAdminNotificationData {
   orderId: string;
+  orderNumber?: number | null;
   channelTitle: string;
   amount: string;
   currency: string;
@@ -278,6 +286,7 @@ export async function sendOrderPaymentAdminNotification(
     const emailHtml = await render(
       OrderPaymentAdminNotification({
         orderId: data.orderId,
+        orderNumber: data.orderNumber,
         channelTitle: data.channelTitle,
         amount: data.amount,
         currency: data.currency,
@@ -288,10 +297,11 @@ export async function sendOrderPaymentAdminNotification(
       })
     );
     
+    const orderDisplay = data.orderNumber != null ? `#${data.orderNumber}` : data.orderId.slice(0, 8);
     const { error } = await resend.emails.send({
       from: FROM_EMAIL,
       to: [ADMIN_EMAIL],
-      subject: `💰 Payment Received - Order #${data.orderId.slice(0, 8)} | ${data.channelTitle}`,
+      subject: `💰 Payment Received - Order ${orderDisplay} | ${data.channelTitle}`,
       html: emailHtml,
     });
 

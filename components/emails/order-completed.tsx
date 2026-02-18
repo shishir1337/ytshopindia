@@ -2,15 +2,18 @@ import * as React from "react";
 
 interface OrderCompletedEmailProps {
   orderId: string;
+  orderNumber?: number | null;
   channelTitle: string;
   customerName: string;
 }
 
 export function OrderCompletedEmail({
   orderId,
+  orderNumber,
   channelTitle,
   customerName,
 }: OrderCompletedEmailProps) {
+  const orderDisplay = orderNumber != null ? `#${orderNumber}` : orderId;
   return (
     <div style={{ fontFamily: "system-ui, -apple-system, sans-serif", maxWidth: "600px", margin: "0 auto", padding: "20px" }}>
       <div style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "24px" }}>
@@ -33,7 +36,7 @@ export function OrderCompletedEmail({
           <div>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
               <span style={{ color: "#166534", fontSize: "14px" }}>Order ID:</span>
-              <span style={{ color: "#166534", fontSize: "14px", fontWeight: "600" }}>{orderId}</span>
+              <span style={{ color: "#166534", fontSize: "14px", fontWeight: "600" }}>{orderDisplay}</span>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
               <span style={{ color: "#166534", fontSize: "14px" }}>Channel:</span>

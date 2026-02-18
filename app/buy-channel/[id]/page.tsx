@@ -35,6 +35,7 @@ async function getListing(id: string) {
         const listing = await prisma.channelListing.findUnique({
             where: { id },
         })
+        if (!listing || listing.deletedAt) return null
         return listing
     } catch (error) {
         console.error("Error fetching listing:", error)

@@ -24,7 +24,7 @@ export async function GET(
       where: { id },
     });
 
-    if (!listing) {
+    if (!listing || listing.deletedAt) {
       return NextResponse.json({ error: "Listing not found" }, { status: 404 });
     }
 
@@ -55,12 +55,12 @@ export async function PATCH(
     const { id } = await params;
     const body = await request.json();
 
-    // Check if listing exists
+    // Check if listing exists and is not soft-deleted
     const existingListing = await prisma.channelListing.findUnique({
       where: { id },
     });
 
-    if (!existingListing) {
+    if (!existingListing || existingListing.deletedAt) {
       return NextResponse.json(
         { error: "Listing not found" },
         { status: 404 }
@@ -133,8 +133,10 @@ export async function DELETE(
 
     const { id } = await params;
 
-    await prisma.channelListing.delete({
+    // Soft delete: set deletedAt and status so FK remains valid
+    await prisma.channelListing.update({
       where: { id },
+      data: { deletedAt: new Date(), status: "deleted" },
     });
 
     // Revalidate paths

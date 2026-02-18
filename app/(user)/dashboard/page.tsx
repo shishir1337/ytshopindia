@@ -13,6 +13,7 @@ import { OrdersList } from "./components/orders-list"
 
 interface Order {
     id: string
+    orderNumber?: number | null
     status: string
     amount: string
     currency: string
@@ -30,10 +31,17 @@ interface Order {
     }
 }
 
+interface DashboardUser {
+    image?: string | null
+    name?: string | null
+    email: string
+    createdAt?: Date | string
+}
+
 export default function DashboardPage() {
     const router = useRouter()
     const [loading, setLoading] = useState(true)
-    const [user, setUser] = useState<any>(null)
+    const [user, setUser] = useState<DashboardUser | null>(null)
     const [orders, setOrders] = useState<Order[]>([])
     const [ordersLoading, setOrdersLoading] = useState(true)
 
@@ -104,7 +112,7 @@ export default function DashboardPage() {
                     <CardContent className="space-y-4">
                         <div className="flex items-center gap-4">
                             <Avatar className="size-16">
-                                <AvatarImage src={user.image} alt={user.name} />
+                                <AvatarImage src={user.image ?? undefined} alt={user.name ?? undefined} />
                                 <AvatarFallback>{user.name?.charAt(0).toUpperCase()}</AvatarFallback>
                             </Avatar>
                             <div>
@@ -116,7 +124,7 @@ export default function DashboardPage() {
                         <div className="pt-4 border-t">
                             <div className="grid grid-cols-2 gap-2 text-sm">
                                 <span className="text-muted-foreground">Member Since:</span>
-                                <span className="font-medium">{new Date(user.createdAt).toLocaleDateString()}</span>
+                                <span className="font-medium">{user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "—"}</span>
                             </div>
                         </div>
                     </CardContent>

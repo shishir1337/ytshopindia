@@ -69,6 +69,7 @@ function formatDate(date: Date): string {
 
 interface Order {
   id: string;
+  orderNumber?: number | null;
   status: string;
   paymentStatus: string | null;
   amount: string;
@@ -126,6 +127,7 @@ export function OrdersTable({ orders: initialOrders }: OrdersTableProps) {
     const matchesSearch =
       searchQuery === "" ||
       order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (order.orderNumber != null && String(order.orderNumber).includes(searchQuery)) ||
       order.channelListing.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (order.user?.email || order.guestEmail || "").toLowerCase().includes(searchQuery.toLowerCase());
     return matchesStatus && matchesSearch;
@@ -317,7 +319,9 @@ export function OrdersTable({ orders: initialOrders }: OrdersTableProps) {
             ) : (
               filteredOrders.map((order) => (
                 <TableRow key={order.id}>
-                  <TableCell className="font-mono text-xs">{order.id.slice(0, 8)}...</TableCell>
+                  <TableCell className="font-mono text-xs">
+                    Order #{order.orderNumber ?? order.id.slice(0, 8)}
+                  </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       {order.channelListing.featuredImage && (

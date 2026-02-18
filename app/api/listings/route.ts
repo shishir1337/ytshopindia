@@ -119,7 +119,7 @@ export async function GET(request: Request) {
     const category = searchParams.get("category");
     const status = searchParams.get("status") || "approved"; // Only show approved by default
 
-    const where: any = { status };
+    const where: any = { status, deletedAt: null };
     if (category) {
       where.category = category;
     }

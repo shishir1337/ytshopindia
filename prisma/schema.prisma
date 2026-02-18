@@ -168,7 +168,8 @@ model ChannelListing {
   approvedAt      DateTime?
   approvedBy      String?
   notes           String?   @db.Text
-  
+  deletedAt       DateTime?  // Soft delete; null = not deleted
+
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
@@ -182,7 +183,8 @@ model ChannelListing {
 
 model Order {
   id                String          @id @default(cuid())
-  
+  orderNumber       Int?            @unique  // Set by migration backfill + sequence default; required after migration 2
+
   // Order Details
   channelListingId  String
   channelListing    ChannelListing  @relation(fields: [channelListingId], references: [id], onDelete: Restrict)

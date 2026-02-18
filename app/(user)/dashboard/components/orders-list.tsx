@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 interface Order {
     id: string
+    orderNumber?: number | null
     status: string
     amount: string
     currency: string
@@ -99,7 +100,7 @@ export function OrdersList({ orders, loading }: OrdersListProps) {
                             <div>
                                 <h3 className="font-semibold text-sm">{order.channelListing.title}</h3>
                                 <p className="text-xs text-muted-foreground mt-1">
-                                    Order #{order.id.slice(0, 8)}
+                                    Order #{order.orderNumber ?? order.id.slice(0, 8)}
                                 </p>
                             </div>
                             <div className="text-right">

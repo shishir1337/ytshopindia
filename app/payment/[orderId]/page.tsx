@@ -13,6 +13,7 @@ import { PaymentSkeleton } from "./components/payment-skeleton"
 
 interface PaymentData {
     id: string
+    orderNumber?: number | null
     amount: string
     currency: string
     paymentAddress: string
@@ -214,8 +215,8 @@ export default function PaymentPage() {
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div>
-                                <Label className="text-xs text-muted-foreground">Order ID</Label>
-                                <p className="font-mono text-sm">{orderId}</p>
+                                <Label className="text-xs text-muted-foreground">Order</Label>
+                                <p className="font-mono text-sm">#{paymentData.orderNumber ?? orderId}</p>
                             </div>
 
                             <div>

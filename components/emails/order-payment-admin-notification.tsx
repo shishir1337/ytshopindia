@@ -2,6 +2,7 @@ import * as React from "react";
 
 interface OrderPaymentAdminNotificationProps {
   orderId: string;
+  orderNumber?: number | null;
   channelTitle: string;
   amount: string;
   currency: string;
@@ -13,6 +14,7 @@ interface OrderPaymentAdminNotificationProps {
 
 export function OrderPaymentAdminNotification({
   orderId,
+  orderNumber,
   channelTitle,
   amount,
   currency,
@@ -21,6 +23,7 @@ export function OrderPaymentAdminNotification({
   isGuest,
   adminUrl = "http://localhost:3000/admin/orders",
 }: OrderPaymentAdminNotificationProps) {
+  const orderDisplay = orderNumber != null ? `#${orderNumber}` : orderId;
   return (
     <div style={{ fontFamily: "system-ui, -apple-system, sans-serif", maxWidth: "600px", margin: "0 auto", padding: "20px" }}>
       <div style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: "8px", padding: "24px" }}>
@@ -48,7 +51,7 @@ export function OrderPaymentAdminNotification({
           
           <div style={{ marginBottom: "8px" }}>
             <strong style={{ color: "#374151" }}>Order ID:</strong>
-            <span style={{ color: "#6b7280", marginLeft: "8px", fontFamily: "monospace" }}>{orderId}</span>
+            <span style={{ color: "#6b7280", marginLeft: "8px", fontFamily: "monospace" }}>{orderDisplay}</span>
           </div>
           
           <div style={{ marginBottom: "8px" }}>
