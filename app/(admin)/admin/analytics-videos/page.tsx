@@ -5,13 +5,16 @@ import { Plus, Video, Trash2, Edit2, Loader2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import Link from "next/link";
-import { VideoFormDialog } from "./components/video-form-dialog";
+import Image from "next/image";
+import { VideoFormDialog, type AnalyticsVideoInput } from "./components/video-form-dialog";
+
+type AnalyticsVideoWithId = AnalyticsVideoInput & { id: string };
 
 export default function AnalyticsVideosPage() {
-    const [videos, setVideos] = useState<any[]>([]);
+    const [videos, setVideos] = useState<AnalyticsVideoWithId[]>([]);
     const [loading, setLoading] = useState(true);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [editingVideo, setEditingVideo] = useState<any>(null);
+    const [editingVideo, setEditingVideo] = useState<AnalyticsVideoInput | null>(null);
 
     const fetchVideos = async () => {
         try {
@@ -55,7 +58,7 @@ export default function AnalyticsVideosPage() {
         }
     };
 
-    const handleEdit = (video: any) => {
+    const handleEdit = (video: AnalyticsVideoWithId) => {
         setEditingVideo(video);
         setIsDialogOpen(true);
     };
@@ -108,10 +111,12 @@ export default function AnalyticsVideosPage() {
                     {videos.map((video) => (
                         <div key={video.id} className="group relative overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-all hover:shadow-md">
                             <div className="aspect-video relative overflow-hidden bg-muted">
-                                <img
+                                <Image
                                     src={video.thumbnail || `https://img.youtube.com/vi/${video.videoId}/maxresdefault.jpg`}
-                                    alt={video.title}
-                                    className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                                    alt={video.title ?? "Video thumbnail"}
+                                    fill
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                    className="object-cover transition-transform group-hover:scale-105"
                                 />
                                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                                     <Button size="icon" variant="secondary" onClick={() => handleEdit(video)}>
@@ -139,7 +144,7 @@ export default function AnalyticsVideosPage() {
             <VideoFormDialog
                 open={isDialogOpen}
                 onOpenChange={setIsDialogOpen}
-                video={editingVideo}
+                video={editingVideo ?? undefined}
                 onSuccess={fetchVideos}
             />
         </div>

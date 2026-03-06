@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import type { Prisma } from "@/lib/generated/prisma/client";
 
 export interface BlogPost {
   id: string;
@@ -13,7 +14,7 @@ export interface BlogPost {
 }
 
 export async function getBlogPosts(published?: string | null): Promise<BlogPost[]> {
-  const where: any = {};
+  const where: Prisma.BlogPostWhereInput = {};
   if (published !== null && published !== undefined && published !== "all") {
     where.published = published === "true";
   }

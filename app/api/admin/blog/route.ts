@@ -18,7 +18,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const published = searchParams.get("published");
 
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (published !== null) {
       where.published = published === "true";
     }
@@ -40,10 +40,11 @@ export async function GET(request: Request) {
     });
 
     return NextResponse.json({ posts });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error fetching blog posts:", error);
+    const message = error instanceof Error ? error.message : "Internal server error";
     return NextResponse.json(
-      { error: error.message || "Internal server error" },
+      { error: message },
       { status: 500 }
     );
   }
@@ -101,10 +102,11 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ post }, { status: 201 });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error creating blog post:", error);
+    const message = error instanceof Error ? error.message : "Internal server error";
     return NextResponse.json(
-      { error: error.message || "Internal server error" },
+      { error: message },
       { status: 500 }
     );
   }

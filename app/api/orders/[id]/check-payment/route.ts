@@ -130,10 +130,11 @@ export async function POST(
     }
 
     return NextResponse.json({ order: updatedOrder });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error checking payment:", error);
+    const message = error instanceof Error ? error.message : "Failed to check payment status";
     return NextResponse.json(
-      { error: error.message || "Failed to check payment status" },
+      { error: message },
       { status: 500 }
     );
   }

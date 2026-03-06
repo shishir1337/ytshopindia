@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
+import type { Prisma } from "@/lib/generated/prisma/client";
 import { revalidatePath } from "next/cache";
 import { sendListingApprovedSellerNotification } from "@/lib/email";
 
@@ -29,10 +30,11 @@ export async function GET(
     }
 
     return NextResponse.json({ listing });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error fetching listing:", error);
+    const message = error instanceof Error ? error.message : "Internal server error";
     return NextResponse.json(
-      { error: error.message || "Internal server error" },
+      { error: message },
       { status: 500 }
     );
   }
@@ -68,7 +70,7 @@ export async function PATCH(
     }
 
     // If status is being changed to approved, set approvedAt and approvedBy
-    const updateData: any = { ...body };
+    const updateData: Prisma.ChannelListingUpdateInput = { ...body } as Prisma.ChannelListingUpdateInput;
     const isBeingApproved = body.status === "approved" && existingListing.status !== "approved";
 
     if (isBeingApproved) {
@@ -108,10 +110,11 @@ export async function PATCH(
     revalidatePath(`/buy-channel/${listing.id}`);
 
     return NextResponse.json({ listing });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error updating listing:", error);
+    const message = error instanceof Error ? error.message : "Internal server error";
     return NextResponse.json(
-      { error: error.message || "Internal server error" },
+      { error: message },
       { status: 500 }
     );
   }
@@ -144,10 +147,11 @@ export async function DELETE(
     revalidatePath("/buy-channel");
 
     return NextResponse.json({ success: true });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error deleting listing:", error);
+    const message = error instanceof Error ? error.message : "Internal server error";
     return NextResponse.json(
-      { error: error.message || "Internal server error" },
+      { error: message },
       { status: 500 }
     );
   }

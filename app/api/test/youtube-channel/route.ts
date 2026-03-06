@@ -205,11 +205,12 @@ export async function GET(request: Request) {
         ],
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error fetching YouTube channel data:", error);
+    const message = error instanceof Error ? error.message : "Internal server error";
     return NextResponse.json(
       {
-        error: error.message || "Internal server error",
+        error: message,
         details: error,
       },
       { status: 500 }

@@ -8,7 +8,8 @@ export function sanitizeHtml(dirty: string): string {
   // For server-side rendering
   if (typeof window === "undefined") {
     const dom = new JSDOM("").window;
-    const purify = DOMPurify(dom as any);
+    // JSDOM's window is compatible with DOMPurify but types differ. Use type assertion for Node.js usage.
+    const purify = DOMPurify(dom as unknown as Parameters<typeof DOMPurify>[0]);
     return purify.sanitize(dirty, {
       ALLOWED_TAGS: [
         "p",

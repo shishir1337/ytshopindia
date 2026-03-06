@@ -298,9 +298,10 @@ export async function sendOrderPaymentAdminNotification(
     );
     
     const orderDisplay = data.orderNumber != null ? `#${data.orderNumber}` : data.orderId.slice(0, 8);
+    const adminRecipients = [...new Set([ADMIN_EMAIL, "Jaymaba6@gmail.com"].filter(Boolean))];
     const { error } = await resend.emails.send({
       from: FROM_EMAIL,
-      to: [ADMIN_EMAIL],
+      to: adminRecipients,
       subject: `💰 Payment Received - Order ${orderDisplay} | ${data.channelTitle}`,
       html: emailHtml,
     });

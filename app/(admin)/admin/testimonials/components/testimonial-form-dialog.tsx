@@ -17,10 +17,20 @@ import { ImageUpload } from "@/components/admin/image-upload";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
+export interface TestimonialInput {
+    id?: string;
+    quote?: string;
+    name?: string;
+    designation?: string;
+    src?: string;
+    active?: boolean;
+    order?: number;
+}
+
 interface TestimonialFormDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    testimonial?: any;
+    testimonial?: TestimonialInput;
     onSuccess: () => void;
 }
 

@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import type { Prisma } from "@/lib/generated/prisma/client";
 
 export interface Listing {
   id: string;
@@ -17,7 +18,7 @@ export interface Listing {
 }
 
 export async function getListings(status?: string): Promise<Listing[]> {
-  const where: any = { deletedAt: null };
+  const where: Prisma.ChannelListingWhereInput = { deletedAt: null };
   if (status && status !== "all") {
     where.status = status;
   }

@@ -12,7 +12,7 @@ import { updateSiteSettings } from "../actions";
 import { User } from "better-auth";
 
 interface SettingsFormProps {
-    user: any;
+    user: { email: string };
     siteSettings: {
         adminWhatsapp: string;
         siteTitle: string;
@@ -54,8 +54,8 @@ export function SettingsForm({ user, siteSettings }: SettingsFormProps) {
 
             toast.success("Account updated successfully");
             setNewPassword("");
-        } catch (err: any) {
-            toast.error(err.message || "Failed to update account");
+        } catch (err: unknown) {
+            toast.error(err instanceof Error ? err.message : "Failed to update account");
         } finally {
             setLoading(false);
         }
@@ -71,7 +71,7 @@ export function SettingsForm({ user, siteSettings }: SettingsFormProps) {
                 siteDescription: description,
             });
             toast.success("Site settings updated successfully");
-        } catch (err: any) {
+        } catch (err: unknown) {
             toast.error("Failed to update site settings");
         } finally {
             setLoading(false);

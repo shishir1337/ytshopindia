@@ -173,12 +173,14 @@ export async function GET(
         country: channel.snippet?.country, // Include for reference but don't auto-fill
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error fetching YouTube channel data:", error);
+    const message = error instanceof Error ? error.message : "Failed to fetch YouTube channel data";
+    const details = error instanceof Error && process.env.NODE_ENV === "development" ? error.stack : undefined;
     return NextResponse.json(
       {
-        error: error.message || "Failed to fetch YouTube channel data",
-        details: process.env.NODE_ENV === "development" ? error.stack : undefined,
+        error: message,
+        details,
       },
       { status: 500 }
     );

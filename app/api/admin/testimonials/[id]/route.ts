@@ -28,10 +28,11 @@ export async function GET(
         }
 
         return NextResponse.json({ testimonial });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Error fetching testimonial:", error);
+        const message = error instanceof Error ? error.message : "Internal server error";
         return NextResponse.json(
-            { error: error.message || "Internal server error" },
+            { error: message },
             { status: 500 }
         );
     }
@@ -62,10 +63,11 @@ export async function PATCH(
         revalidatePath("/");
 
         return NextResponse.json({ testimonial });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Error updating testimonial:", error);
+        const message = error instanceof Error ? error.message : "Internal server error";
         return NextResponse.json(
-            { error: error.message || "Internal server error" },
+            { error: message },
             { status: 500 }
         );
     }
@@ -93,10 +95,11 @@ export async function DELETE(
         revalidatePath("/");
 
         return NextResponse.json({ message: "Testimonial deleted successfully" });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Error deleting testimonial:", error);
+        const message = error instanceof Error ? error.message : "Internal server error";
         return NextResponse.json(
-            { error: error.message || "Internal server error" },
+            { error: message },
             { status: 500 }
         );
     }

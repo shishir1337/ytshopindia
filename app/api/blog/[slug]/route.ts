@@ -50,10 +50,11 @@ export async function GET(
     });
 
     return NextResponse.json({ post, relatedPosts });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error fetching blog post:", error);
+    const message = error instanceof Error ? error.message : "Internal server error";
     return NextResponse.json(
-      { error: error.message || "Internal server error" },
+      { error: message },
       { status: 500 }
     );
   }

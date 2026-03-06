@@ -77,10 +77,11 @@ export async function POST(request: Request) {
       message: `Expired ${result.count} order(s)`,
       expiredCount: result.count,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error expiring old orders:", error);
+    const message = error instanceof Error ? error.message : "Internal server error";
     return NextResponse.json(
-      { error: error.message || "Internal server error" },
+      { error: message },
       { status: 500 }
     );
   }

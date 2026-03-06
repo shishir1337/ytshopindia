@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import type { Prisma } from "@/lib/generated/prisma/client";
 import { sendNewListingAdminNotification } from "@/lib/email";
 import { sendWhatsAppNotification } from "@/lib/whatsapp";
 
@@ -100,10 +101,11 @@ export async function POST(request: Request) {
       },
       { status: 201 }
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error creating listing:", error);
+    const message = error instanceof Error ? error.message : "Internal server error";
     return NextResponse.json(
-      { error: error.message || "Internal server error" },
+      { error: message },
       { status: 500 }
     );
   }
@@ -119,7 +121,7 @@ export async function GET(request: Request) {
     const category = searchParams.get("category");
     const status = searchParams.get("status") || "approved"; // Only show approved by default
 
-    const where: any = { status, deletedAt: null };
+    const where: Prisma.ChannelListingWhereInput = { status, deletedAt: null };
     if (category) {
       where.category = category;
     }
@@ -158,10 +160,11 @@ export async function GET(request: Request) {
         totalPages: Math.ceil(total / limit),
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error fetching listings:", error);
+    const message = error instanceof Error ? error.message : "Internal server error";
     return NextResponse.json(
-      { error: error.message || "Internal server error" },
+      { error: message },
       { status: 500 }
     );
   }

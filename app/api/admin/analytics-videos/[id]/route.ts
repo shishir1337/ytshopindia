@@ -22,7 +22,7 @@ export async function PATCH(
         const body = await request.json();
         const { videoId, title, thumbnail, order } = body;
 
-        const data: any = {};
+        const data: { videoId?: string; title?: string; thumbnail?: string | null; order?: number } = {};
         if (videoId) data.videoId = videoId;
         if (title) data.title = title;
         if (thumbnail) data.thumbnail = thumbnail;
@@ -36,10 +36,11 @@ export async function PATCH(
         revalidatePath("/");
 
         return NextResponse.json({ video });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Error updating analytics video:", error);
+        const message = error instanceof Error ? error.message : "Internal server error";
         return NextResponse.json(
-            { error: error.message || "Internal server error" },
+            { error: message },
             { status: 500 }
         );
     }
@@ -68,10 +69,11 @@ export async function DELETE(
         revalidatePath("/");
 
         return NextResponse.json({ message: "Video deleted successfully" });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Error deleting analytics video:", error);
+        const message = error instanceof Error ? error.message : "Internal server error";
         return NextResponse.json(
-            { error: error.message || "Internal server error" },
+            { error: message },
             { status: 500 }
         );
     }

@@ -18,9 +18,6 @@ export default function CheckoutPage() {
 
     const [loading, setLoading] = useState(false)
     const [checkingSession, setCheckingSession] = useState(true)
-    const [isLoggedIn, setIsLoggedIn] = useState(false)
-    const [userEmail, setUserEmail] = useState("")
-    const [userName, setUserName] = useState("")
     const [channelAccessEmail, setChannelAccessEmail] = useState<string | null>(null)
 
     useEffect(() => {
@@ -42,17 +39,20 @@ export default function CheckoutPage() {
 
         setChannelAccessEmail(accessEmail)
 
-        // Check user session for guest email/name if needed
+        // Require logged-in user
         const checkSession = async () => {
             try {
                 const session = await authClient.getSession()
                 if (session?.data?.user) {
-                    setIsLoggedIn(true)
-                    setUserEmail(session.data.user.email)
-                    setUserName(session.data.user.name || "")
+                } else {
+                    toast.error("Please sign in to complete your purchase")
+                    router.push(`/buy-channel/${listingId}`)
+                    return
                 }
-            } catch (error) {
-                // Not logged in - that's fine, we'll use guest checkout
+            } catch {
+                toast.error("Please sign in to complete your purchase")
+                router.push(`/buy-channel/${listingId}`)
+                return
             } finally {
                 setCheckingSession(false)
             }
@@ -71,11 +71,6 @@ export default function CheckoutPage() {
                 return
             }
 
-            // For guest users, we still need guestEmail for order notifications
-            // Use channelAccessEmail as guestEmail if user is not logged in
-            const guestEmailForOrder = isLoggedIn ? null : channelAccessEmail
-            const guestNameForOrder = isLoggedIn ? null : (userName || "Guest")
-
             const response = await fetch("/api/orders", {
                 method: "POST",
                 headers: {
@@ -84,8 +79,6 @@ export default function CheckoutPage() {
                 body: JSON.stringify({
                     listingId,
                     channelAccessEmail,
-                    guestEmail: guestEmailForOrder,
-                    guestName: guestNameForOrder,
                 }),
             })
 
@@ -97,18 +90,13 @@ export default function CheckoutPage() {
                 return
             }
 
-            // Store email for guest orders to enable access later
-            if (!isLoggedIn && channelAccessEmail && typeof window !== "undefined") {
-                localStorage.setItem(`order_${data.order.id}_email`, channelAccessEmail)
-            }
-
             toast.success("Order created! Redirecting to payment...")
             if (data.order.paymentUrl) {
                 window.location.href = data.order.paymentUrl
             } else {
                 router.push(`/payment/${data.order.id}`)
             }
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Checkout error:", error)
             toast.error("An error occurred. Please try again.")
         } finally {
@@ -162,7 +150,7 @@ export default function CheckoutPage() {
                                     <span className="text-sm text-muted-foreground">Cryptocurrency (USD)</span>
                                 </div>
                                 <p className="text-xs text-muted-foreground mb-4">
-                                    You'll be redirected to complete payment with cryptocurrency after placing your order.
+                                    You&apos;ll be redirected to complete payment with cryptocurrency after placing your order.
                                 </p>
                             </div>
 

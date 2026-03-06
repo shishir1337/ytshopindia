@@ -158,8 +158,8 @@ export function OrdersTable({ orders: initialOrders }: OrdersTableProps) {
 
       // Refresh the page to show updated orders
       window.location.reload();
-    } catch (error: any) {
-      toast.error(error.message || "Failed to expire old orders");
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : "Failed to expire old orders");
     } finally {
       setExpiring(false);
     }
@@ -211,8 +211,8 @@ export function OrdersTable({ orders: initialOrders }: OrdersTableProps) {
       setSelectedOrder(null);
       setDeliveryDetails("");
       setDeliveryNotes("");
-    } catch (error: any) {
-      toast.error(error.message || "Failed to update order");
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : "Failed to update order");
     } finally {
       setLoading(false);
     }

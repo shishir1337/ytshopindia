@@ -112,10 +112,11 @@ export async function POST(
       success: true,
       order: updatedOrder,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error marking order as delivered:", error);
+    const message = error instanceof Error ? error.message : "Failed to update order";
     return NextResponse.json(
-      { error: error.message || "Failed to update order" },
+      { error: message },
       { status: 500 }
     );
   }

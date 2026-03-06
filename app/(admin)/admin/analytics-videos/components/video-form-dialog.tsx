@@ -14,10 +14,18 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
+export interface AnalyticsVideoInput {
+    id?: string;
+    videoId?: string;
+    title?: string;
+    thumbnail?: string | null;
+    order?: number;
+}
+
 interface VideoFormDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    video?: any;
+    video?: AnalyticsVideoInput;
     onSuccess: () => void;
 }
 

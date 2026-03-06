@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { verifyCryptomusWebhook } from "@/lib/cryptomus";
 import { sendOrderConfirmationEmail, sendOrderCompletedEmail, sendOrderPaymentAdminNotification } from "@/lib/email";
+import { sendOrderPaidWhatsAppNotification } from "@/lib/twilio-whatsapp";
 
 export async function POST(request: NextRequest) {
   try {
@@ -109,6 +111,18 @@ export async function POST(request: NextRequest) {
       }).catch((error) => {
         console.error("Failed to send admin order payment notification:", error);
       });
+
+      await sendOrderPaidWhatsAppNotification({
+        orderId: order.id,
+        orderNumber: order.orderNumber ?? null,
+        channelTitle: order.channelListing.title,
+        amount: order.amount,
+        currency: order.currency,
+        customerName,
+        customerEmail: customerEmail || "N/A",
+      }).catch((error) => {
+        console.error("Failed to send WhatsApp order notification:", error);
+      });
     } else if (cryptomusStatus === "expired") {
       updatedStatus = "expired";
     } else if (cryptomusStatus === "cancelled" || cryptomusStatus === "cancel") {
@@ -129,6 +143,10 @@ export async function POST(request: NextRequest) {
         where: { id: order.channelListingId },
         data: { status: "sold" },
       });
+      // Invalidate cache so sold channel disappears from home & buy-channel listings immediately
+      revalidatePath("/");
+      revalidatePath("/buy-channel");
+      revalidatePath(`/buy-channel/${order.channelListingId}`);
     }
 
     return NextResponse.json({ success: true, status: updatedStatus });

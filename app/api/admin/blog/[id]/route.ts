@@ -28,10 +28,11 @@ export async function GET(
     }
 
     return NextResponse.json({ post });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error fetching blog post:", error);
+    const message = error instanceof Error ? error.message : "Internal server error";
     return NextResponse.json(
-      { error: error.message || "Internal server error" },
+      { error: message },
       { status: 500 }
     );
   }
@@ -105,10 +106,11 @@ export async function PATCH(
     revalidatePath(`/blog/${post.slug}`);
 
     return NextResponse.json({ post });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error updating blog post:", error);
+    const message = error instanceof Error ? error.message : "Internal server error";
     return NextResponse.json(
-      { error: error.message || "Internal server error" },
+      { error: message },
       { status: 500 }
     );
   }
@@ -139,10 +141,11 @@ export async function DELETE(
     revalidatePath("/blog");
 
     return NextResponse.json({ success: true });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error deleting blog post:", error);
+    const message = error instanceof Error ? error.message : "Internal server error";
     return NextResponse.json(
-      { error: error.message || "Internal server error" },
+      { error: message },
       { status: 500 }
     );
   }

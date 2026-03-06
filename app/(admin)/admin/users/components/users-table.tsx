@@ -49,7 +49,7 @@ export function UsersTable() {
                 return
             }
             if (data) {
-                setUsers(data.users as any)
+                setUsers(data.users as UserType[])
             }
         } catch (err) {
             toast.error("An error occurred while fetching users")

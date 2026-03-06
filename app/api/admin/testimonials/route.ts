@@ -20,10 +20,11 @@ export async function GET() {
         });
 
         return NextResponse.json({ testimonials });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Error fetching testimonials:", error);
+        const message = error instanceof Error ? error.message : "Internal server error";
         return NextResponse.json(
-            { error: error.message || "Internal server error" },
+            { error: message },
             { status: 500 }
         );
     }
@@ -64,10 +65,11 @@ export async function POST(request: Request) {
         revalidatePath("/");
 
         return NextResponse.json({ testimonial }, { status: 201 });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Error creating testimonial:", error);
+        const message = error instanceof Error ? error.message : "Internal server error";
         return NextResponse.json(
-            { error: error.message || "Internal server error" },
+            { error: message },
             { status: 500 }
         );
     }

@@ -10,7 +10,7 @@ export async function GET() {
         });
 
         return NextResponse.json({ testimonials });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Error fetching public testimonials:", error);
         return NextResponse.json(
             { error: "Internal server error" },

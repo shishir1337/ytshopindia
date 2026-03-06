@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { listingId, channelAccessEmail, guestEmail, guestName } = validationResult.data;
+    const { listingId, channelAccessEmail } = validationResult.data;
 
     if (!listingId) {
       return NextResponse.json(
@@ -36,17 +36,6 @@ export async function POST(request: NextRequest) {
         { error: channelAccessEmailValidation.error || "Invalid channel access email" },
         { status: 400 }
       );
-    }
-
-    // Validate email if provided
-    if (guestEmail) {
-      const emailValidation = validateEmail(guestEmail);
-      if (!emailValidation.valid) {
-        return NextResponse.json(
-          { error: emailValidation.error },
-          { status: 400 }
-        );
-      }
     }
 
     // Get listing
@@ -78,35 +67,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get user session (optional - for logged in users)
-    let userId: string | null = null;
-    let userEmail: string | null = null;
-    let userName: string | null = null;
+    // Require authenticated session
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
 
-    try {
-      const session = await auth.api.getSession({
-        headers: await headers(),
-      });
-      if (session?.user) {
-        userId = session.user.id;
-        userEmail = session.user.email;
-        userName = session.user.name || null;
-      }
-    } catch (error) {
-      // User not logged in, continue as guest
-    }
-
-    // For guest users, email is required
-    if (!userId && !guestEmail) {
+    if (!session?.user) {
       return NextResponse.json(
-        { error: "Email is required for guest checkout" },
-        { status: 400 }
+        { error: "Sign in required to purchase. Please sign in and try again." },
+        { status: 401 }
       );
     }
 
-    // Determine email to use
-    const orderEmail = userEmail || guestEmail!;
-    const orderName = userName || guestName || "Guest";
+    const userId = session.user.id;
 
     // Convert price to USD
     if (!listing.expectedPrice) {
@@ -136,9 +109,9 @@ export async function POST(request: NextRequest) {
     const order = await prisma.order.create({
       data: {
         channelListingId: listing.id,
-        userId: userId || null,
-        guestEmail: userId ? null : guestEmail,
-        guestName: userId ? null : orderName,
+        userId,
+        guestEmail: null,
+        guestName: null,
         channelAccessEmail,
         originalPrice,
         originalCurrency,
@@ -189,16 +162,17 @@ export async function POST(request: NextRequest) {
         expiresAt: cryptomusResponse.result.expired_at,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error creating order:", error);
+    const message = error instanceof Error ? error.message : "Failed to create order";
     return NextResponse.json(
-      { error: error.message || "Failed to create order" },
+      { error: message },
       { status: 500 }
     );
   }
 }
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const session = await auth.api.getSession({
       headers: await headers(),
@@ -232,7 +206,7 @@ export async function GET(request: NextRequest) {
     });
 
     return NextResponse.json({ orders });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error fetching orders:", error);
     return NextResponse.json(
       { error: "Failed to fetch orders" },

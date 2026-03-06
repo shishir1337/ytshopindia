@@ -5,13 +5,15 @@ import { Plus, Quote, Trash2, Edit2, Loader2, ArrowLeft, Image as ImageIcon } fr
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import Link from "next/link";
-import { TestimonialFormDialog } from "./components/testimonial-form-dialog";
+import { TestimonialFormDialog, type TestimonialInput } from "./components/testimonial-form-dialog";
+
+type TestimonialWithId = TestimonialInput & { id: string };
 
 export default function TestimonialsPage() {
-    const [testimonials, setTestimonials] = useState<any[]>([]);
+    const [testimonials, setTestimonials] = useState<TestimonialWithId[]>([]);
     const [loading, setLoading] = useState(true);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [editingTestimonial, setEditingTestimonial] = useState<any>(null);
+    const [editingTestimonial, setEditingTestimonial] = useState<TestimonialInput | null>(null);
 
     const fetchTestimonials = async () => {
         try {
@@ -55,7 +57,7 @@ export default function TestimonialsPage() {
         }
     };
 
-    const handleEdit = (testimonial: any) => {
+    const handleEdit = (testimonial: TestimonialWithId) => {
         setEditingTestimonial(testimonial);
         setIsDialogOpen(true);
     };
@@ -150,7 +152,7 @@ export default function TestimonialsPage() {
             <TestimonialFormDialog
                 open={isDialogOpen}
                 onOpenChange={setIsDialogOpen}
-                testimonial={editingTestimonial}
+                testimonial={editingTestimonial ?? undefined}
                 onSuccess={fetchTestimonials}
             />
         </div>
