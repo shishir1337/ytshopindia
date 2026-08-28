@@ -56,7 +56,7 @@ export async function Blog() {
                 id={blog.id}
                 title={blog.title}
                 excerpt={blog.excerpt}
-                image={blog.image || "/placeholder-blog.jpg"}
+                image={blog.image}
                 date={formatDate(blog.publishedAt)}
                 slug={blog.slug}
               />

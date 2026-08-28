@@ -120,7 +120,7 @@ export default async function BlogPage({
                       id={post.id}
                       title={post.title}
                       excerpt={post.excerpt}
-                      image={post.image || "/placeholder-blog.jpg"}
+                      image={post.image}
                       date={formatDate(post.publishedAt)}
                       slug={post.slug}
                     />

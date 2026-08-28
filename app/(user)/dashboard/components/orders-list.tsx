@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Package } from "lucide-react"
@@ -89,9 +90,12 @@ export function OrdersList({ orders, loading }: OrdersListProps) {
                     className="flex items-start gap-4 p-4 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
                 >
                     {order.channelListing.featuredImage && (
-                        <img
+                        <Image
                             src={order.channelListing.featuredImage}
                             alt={order.channelListing.title}
+                            width={80}
+                            height={80}
+                            sizes="80px"
                             className="w-20 h-20 rounded-lg object-cover"
                         />
                     )}

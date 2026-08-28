@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ConditionalLayout } from "@/components/layout/conditional-layout";
@@ -15,6 +16,9 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  // Only used on a handful of admin/payment screens - don't spend a preload
+  // slot on it for every page load.
+  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -46,20 +50,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <script
-          async
-          src={`https://www.googletagmanager.com/gtag/js?id=${GTAG_ID}`}
-        />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', '${GTAG_ID}');
-            `,
-          }}
-        />
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
@@ -73,6 +65,22 @@ export default function RootLayout({
           <ConditionalLayout>{children}</ConditionalLayout>
           <Toaster />
         </ThemeProvider>
+
+        {/* Loaded after hydration instead of blocking the document head, so
+            the ~140KB gtag bundle no longer competes with the first render. */}
+        <Script
+          id="gtag-src"
+          src={`https://www.googletagmanager.com/gtag/js?id=${GTAG_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GTAG_ID}');
+          `}
+        </Script>
       </body>
     </html>
   );

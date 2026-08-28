@@ -11,6 +11,9 @@ interface AnimatedCounterProps {
   className?: string
 }
 
+const format = (num: number, decimals: number) =>
+  decimals > 0 ? num.toFixed(decimals) : Math.floor(num).toString()
+
 export function AnimatedCounter({
   value,
   duration = 2000,
@@ -19,71 +22,60 @@ export function AnimatedCounter({
   suffix = "",
   className = "",
 }: AnimatedCounterProps) {
-  const [count, setCount] = React.useState(0)
-  const [isVisible, setIsVisible] = React.useState(false)
-  const counterRef = React.useRef<HTMLSpanElement>(null)
+  const numberRef = React.useRef<HTMLSpanElement>(null)
 
   React.useEffect(() => {
+    const node = numberRef.current
+    if (!node) return
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      node.textContent = format(value, decimals)
+      return
+    }
+
+    let frame = 0
+    let startTime: number | null = null
+
+    const step = (now: number) => {
+      if (startTime === null) startTime = now
+      const progress = Math.min((now - startTime) / duration, 1)
+      const eased = 1 - Math.pow(1 - progress, 4)
+
+      // Written straight to the DOM. Driving this through React state meant one
+      // re-render of the whole subtree per frame while the page was still
+      // loading, which showed up directly as blocking time.
+      node.textContent = format(value * eased, decimals)
+
+      if (progress < 1) {
+        frame = requestAnimationFrame(step)
+      }
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !isVisible) {
-          setIsVisible(true)
-        }
+        if (!entry.isIntersecting) return
+        observer.disconnect()
+        node.textContent = format(0, decimals)
+        frame = requestAnimationFrame(step)
       },
       { threshold: 0.1 }
     )
 
-    if (counterRef.current) {
-      observer.observe(counterRef.current)
-    }
+    observer.observe(node)
 
     return () => {
-      if (counterRef.current) {
-        observer.unobserve(counterRef.current)
-      }
+      observer.disconnect()
+      if (frame) cancelAnimationFrame(frame)
     }
-  }, [isVisible])
-
-  React.useEffect(() => {
-    if (!isVisible) return
-
-    let startTime: number | null = null
-    const startValue = 0
-    const endValue = value
-
-    const animate = (currentTime: number) => {
-      if (startTime === null) startTime = currentTime
-      const progress = Math.min((currentTime - startTime) / duration, 1)
-
-      // Easing function for smooth animation
-      const easeOutQuart = 1 - Math.pow(1 - progress, 4)
-      const currentCount = startValue + (endValue - startValue) * easeOutQuart
-
-      setCount(currentCount)
-
-      if (progress < 1) {
-        requestAnimationFrame(animate)
-      } else {
-        setCount(endValue)
-      }
-    }
-
-    requestAnimationFrame(animate)
-  }, [isVisible, value, duration])
-
-  const formatNumber = (num: number): string => {
-    if (decimals > 0) {
-      return num.toFixed(decimals)
-    }
-    return Math.floor(num).toString()
-  }
+  }, [value, duration, decimals])
 
   return (
-    <span ref={counterRef} className={className}>
+    <span className={className}>
       {prefix}
-      {formatNumber(count)}
+      {/* Rendered with the final value so the server HTML - and anyone without
+          JavaScript - shows the real number rather than a zero. */}
+      <span ref={numberRef}>{format(value, decimals)}</span>
       {suffix}
     </span>
   )
 }
-

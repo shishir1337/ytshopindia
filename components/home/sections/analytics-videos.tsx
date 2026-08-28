@@ -1,76 +1,85 @@
-"use client"
+import { cache } from "react"
+import { prisma } from "@/lib/prisma"
+import {
+  AnalyticsVideosCarousel,
+  type CarouselVideo,
+} from "./analytics-videos-carousel"
 
-import * as React from "react"
-import { ChevronLeft, ChevronRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { motion } from "motion/react"
+const YT_THUMB = /^https?:\/\/(img\.youtube\.com|i\.ytimg\.com)\/vi\/([\w-]+)\//
 
-export function AnalyticsVideos() {
-  const [videos, setVideos] = React.useState<any[]>([])
-  const [loading, setLoading] = React.useState(true)
-  const [currentIndex, setCurrentIndex] = React.useState(0)
-  const [itemsToShow, setItemsToShow] = React.useState(3)
+async function exists(url: string): Promise<boolean | null> {
+  try {
+    const response = await fetch(url, { method: "HEAD" })
+    if (response.ok) return true
+    // Only a 404 is proof the image is gone; anything else (429, 5xx) is
+    // treated as "unknown" so a hiccup at YouTube can't hide real videos.
+    return response.status === 404 ? false : null
+  } catch {
+    return null
+  }
+}
 
-  // Fetch videos from API
-  React.useEffect(() => {
-    const fetchVideos = async () => {
-      try {
-        const response = await fetch("/api/analytics-videos")
-        if (response.ok) {
-          const data = await response.json()
-          setVideos(data.videos)
+/**
+ * `maxresdefault.jpg` only exists for videos uploaded above a certain
+ * resolution - it 404s for everything else, which is what produced the broken
+ * thumbnails and console errors. `hqdefault.jpg` exists for every live video,
+ * and because its 16:9 content is letterboxed inside a 4:3 frame,
+ * `object-cover` in an aspect-video box crops back to exactly that 16:9 image.
+ *
+ * When neither exists the video itself has been deleted or made private on
+ * YouTube, so there is nothing worth linking to.
+ */
+const resolveThumbnail = cache(
+  async (thumbnail: string | null, videoId: string): Promise<string | null> => {
+    const custom = thumbnail?.trim()
+
+    // A custom (uploaded) thumbnail is used as-is.
+    if (custom && !YT_THUMB.test(custom)) return custom
+
+    const maxres = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
+    const hq = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+
+    if (await exists(maxres)) return maxres
+    return (await exists(hq)) === false ? null : hq
+  }
+)
+
+async function getAnalyticsVideos(): Promise<CarouselVideo[]> {
+  try {
+    const videos = await prisma.analyticsVideo.findMany({
+      select: { id: true, videoId: true, title: true, thumbnail: true },
+      orderBy: { order: "asc" },
+    })
+
+    const resolved = await Promise.all(
+      videos.map(async (video) => {
+        const thumbnail = await resolveThumbnail(video.thumbnail, video.videoId)
+        if (!thumbnail) {
+          console.warn(
+            `Analytics video "${video.title}" (${video.videoId}) is no longer available on YouTube - hiding it.`
+          )
+          return null
         }
-      } catch (error) {
-        console.error("Error fetching analytics videos:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchVideos()
-  }, [])
+        return {
+          id: video.id,
+          videoId: video.videoId,
+          title: video.title,
+          thumbnail,
+        }
+      })
+    )
 
-  // Calculate items to show based on window width
-  React.useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 640) {
-        setItemsToShow(1)
-      } else if (window.innerWidth < 1024) {
-        setItemsToShow(2)
-      } else {
-        setItemsToShow(3)
-      }
-    }
-
-    handleResize()
-    window.addEventListener("resize", handleResize)
-    return () => window.removeEventListener("resize", handleResize)
-  }, [])
-
-  const maxIndex = Math.max(0, videos.length - itemsToShow)
-
-  // Reset index if it exceeds max after resize
-  React.useEffect(() => {
-    if (currentIndex > maxIndex) {
-      setCurrentIndex(maxIndex)
-    }
-  }, [maxIndex, currentIndex])
-
-  const goToPrevious = () => {
-    setCurrentIndex((prev) => Math.max(0, prev - 1))
+    return resolved.filter((video): video is CarouselVideo => video !== null)
+  } catch (error) {
+    console.error("Error fetching analytics videos:", error)
+    return []
   }
+}
 
-  const goToNext = () => {
-    setCurrentIndex((prev) => Math.min(maxIndex, prev + 1))
-  }
+export async function AnalyticsVideos() {
+  const videos = await getAnalyticsVideos()
 
-  if (loading || videos.length === 0) {
-    if (loading) {
-      return (
-        <div className="py-20 flex justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-        </div>
-      )
-    }
+  if (videos.length === 0) {
     return null
   }
 
@@ -87,107 +96,7 @@ export function AnalyticsVideos() {
           </p>
         </div>
 
-        {/* Carousel Container */}
-        <div className="relative overflow-visible">
-          {/* Navigation Buttons - Hidden on mobile, use swiping instead */}
-          <Button
-            variant="outline"
-            size="icon"
-            className="absolute left-0 top-1/2 z-10 -translate-x-4 -translate-y-1/2 size-10 rounded-full bg-background/80 backdrop-blur-sm shadow-md hover:bg-primary hover:text-primary-foreground border-border hidden sm:flex"
-            onClick={goToPrevious}
-            disabled={currentIndex === 0}
-            aria-label="Previous videos"
-          >
-            <ChevronLeft className="size-5" />
-          </Button>
-
-          <Button
-            variant="outline"
-            size="icon"
-            className="absolute right-0 top-1/2 z-10 translate-x-4 -translate-y-1/2 size-10 rounded-full bg-background/80 backdrop-blur-sm shadow-md hover:bg-primary hover:text-primary-foreground border-border hidden sm:flex"
-            onClick={goToNext}
-            disabled={currentIndex >= maxIndex}
-            aria-label="Next videos"
-          >
-            <ChevronRight className="size-5" />
-          </Button>
-
-          {/* Carousel Viewport */}
-          <div className="relative px-0">
-            <div className="overflow-visible sm:overflow-hidden">
-              <motion.div
-                className="flex gap-4 sm:gap-6"
-                animate={{
-                  x: `calc(-${currentIndex * (100 / itemsToShow)}% - ${currentIndex * (itemsToShow === 1 ? 0 : 1.5)}rem)`,
-                }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                drag="x"
-                dragConstraints={{ left: 0, right: 0 }}
-                onDragEnd={(_, info) => {
-                  const threshold = 50
-                  if (info.offset.x < -threshold && currentIndex < maxIndex) {
-                    goToNext()
-                  } else if (info.offset.x > threshold && currentIndex > 0) {
-                    goToPrevious()
-                  }
-                }}
-              >
-                {videos.map((video) => (
-                  <div
-                    key={video.id}
-                    className="flex-shrink-0"
-                    style={{ width: `calc(${100 / itemsToShow}% - ${itemsToShow === 1 ? 0 : (itemsToShow - 1) * 1.5 / itemsToShow}rem)` }}
-                  >
-                    <a
-                      href={`https://www.youtube.com/watch?v=${video.videoId}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group block"
-                    >
-                      <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-muted transition-all duration-300 group-hover:shadow-2xl group-hover:shadow-primary/20">
-                        <img
-                          src={video.thumbnail}
-                          alt={video.title}
-                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                        {/* Play Button Overlay */}
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/20 transition-all duration-300 group-hover:bg-black/40">
-                          <div className="flex size-12 sm:size-16 lg:size-20 items-center justify-center rounded-full bg-primary/95 text-white shadow-xl transition-all duration-300 group-hover:scale-110 group-hover:bg-primary">
-                            <svg
-                              className="ml-1 size-6 sm:size-8 lg:size-10"
-                              fill="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path d="M8 5v14l11-7z" />
-                            </svg>
-                          </div>
-                        </div>
-                      </div>
-                      <h3 className="mt-3 text-sm font-semibold text-foreground line-clamp-1 sm:text-base group-hover:text-primary transition-colors">
-                        {video.title}
-                      </h3>
-                    </a>
-                  </div>
-                ))}
-              </motion.div>
-            </div>
-          </div>
-
-          {/* Carousel Indicators */}
-          <div className="mt-6 sm:mt-10 flex justify-center gap-1.5 sm:gap-2">
-            {Array.from({ length: maxIndex + 1 }).map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentIndex(index)}
-                className={`h-1.5 sm:h-2 rounded-full transition-all duration-300 ${index === currentIndex
-                  ? "w-6 sm:w-10 bg-primary"
-                  : "w-1.5 sm:w-2 bg-muted-foreground/20 hover:bg-muted-foreground/40"
-                  }`}
-                aria-label={`Go to slide ${index + 1}`}
-              />
-            ))}
-          </div>
-        </div>
+        <AnalyticsVideosCarousel videos={videos} />
       </div>
     </section>
   )

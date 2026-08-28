@@ -1,29 +1,38 @@
 import Image from "next/image"
 import Link from "next/link"
-import { Calendar, ArrowRight } from "lucide-react"
+import { Calendar, ArrowRight, Newspaper } from "lucide-react"
+import { resolveUploadedImage } from "@/lib/uploads"
 
 interface BlogCardProps {
   id: string
   title: string
   excerpt: string
-  image: string
+  image: string | null
   date: string
   slug: string
 }
 
 export function BlogCard({ title, excerpt, image, date, slug }: BlogCardProps) {
+  const imageUrl = resolveUploadedImage(image)
+
   return (
     <Link href={`/blog/${slug}`} className="h-full">
       <article className="group relative flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card transition-all duration-300 hover:border-primary/50 hover:shadow-xl">
         {/* Blog Image */}
         <div className="relative aspect-video w-full overflow-hidden bg-muted">
-          <Image
-            src={image}
-            alt={title}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-110"
-            unoptimized={image.startsWith("/uploads/")}
-          />
+          {imageUrl ? (
+            <Image
+              src={imageUrl}
+              alt={title}
+              fill
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              className="object-cover transition-transform duration-500 group-hover:scale-110"
+            />
+          ) : (
+            <div className="flex size-full items-center justify-center">
+              <Newspaper className="size-12 text-muted-foreground/40" />
+            </div>
+          )}
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
         </div>

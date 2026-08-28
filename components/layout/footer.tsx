@@ -43,14 +43,14 @@ const socialLinks = [
 ]
 
 export function Footer() {
-  const { theme } = useTheme()
+  const { resolvedTheme } = useTheme()
   const [mounted, setMounted] = React.useState(false)
 
   React.useEffect(() => {
     setMounted(true)
   }, [])
 
-  const logoSrc = mounted && theme === "dark" ? "/logo-dark.svg" : "/logo-light.svg"
+  const logoSrc = mounted && resolvedTheme === "dark" ? "/logo-dark.svg" : "/logo-light.svg"
 
   return (
     <footer className="w-full border-t border-t-primary/20 bg-muted/50">

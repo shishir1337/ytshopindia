@@ -24,6 +24,7 @@ import {
 } from "lucide-react"
 import { ImageCarousel } from "../components/image-carousel"
 import { IconBrandWhatsapp } from "@tabler/icons-react"
+import { resolveUploadedImage } from "@/lib/uploads"
 import { BuyButton } from "./components/buy-button"
 
 interface PageProps {
@@ -111,12 +112,11 @@ export default async function ListingDetailsPage({ params }: PageProps) {
     )
     const whatsappUrl = `https://wa.me/919999999999?text=${whatsappMessage}`
 
-    // Collect all images for the carousel
-    const allImages = []
-    if (listing.featuredImage) allImages.push(listing.featuredImage)
-    if (listing.images && listing.images.length > 0) {
-        allImages.push(...listing.images)
-    }
+    // Collect all images for the carousel, dropping any whose file is gone
+    // from the uploads volume so the carousel never renders a broken slide.
+    const allImages = [listing.featuredImage, ...(listing.images ?? [])]
+        .map(resolveUploadedImage)
+        .filter((image): image is string => image !== null)
 
     return (
         <main className="min-h-screen bg-background">

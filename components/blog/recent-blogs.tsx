@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Calendar } from "lucide-react";
+import { Calendar, Newspaper } from "lucide-react";
+import { resolveUploadedImage } from "@/lib/uploads";
 import { Card, CardContent } from "@/components/ui/card";
 
 interface RecentBlogPost {
@@ -36,13 +37,19 @@ export function RecentBlogs({ posts }: RecentBlogsProps) {
                         <Card className="overflow-hidden border-none bg-transparent shadow-none transition-colors hover:bg-muted/50">
                             <CardContent className="flex gap-4 p-2">
                                 <div className="relative aspect-square w-20 shrink-0 overflow-hidden rounded-md border border-border">
-                                    <Image
-                                        src={post.image || "/placeholder-blog.jpg"}
-                                        alt={post.title}
-                                        fill
-                                        className="object-cover transition-transform duration-300 group-hover:scale-110"
-                                        unoptimized={post.image?.startsWith("/uploads/")}
-                                    />
+                                    {resolveUploadedImage(post.image) ? (
+                                        <Image
+                                            src={resolveUploadedImage(post.image)!}
+                                            alt={post.title}
+                                            fill
+                                            sizes="80px"
+                                            className="object-cover transition-transform duration-300 group-hover:scale-110"
+                                        />
+                                    ) : (
+                                        <div className="flex size-full items-center justify-center bg-muted">
+                                            <Newspaper className="size-6 text-muted-foreground/40" />
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="flex flex-col justify-center space-y-1">
                                     <h4 className="line-clamp-2 text-sm font-semibold text-foreground group-hover:text-primary transition-colors">

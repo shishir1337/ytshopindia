@@ -1,9 +1,8 @@
-"use client"
-
 import Image from "next/image"
 import Link from "next/link"
-import { CheckCircle2, XCircle, Users, TrendingUp, ArrowRight, DollarSign } from "lucide-react"
+import { CheckCircle2, XCircle, Users, TrendingUp, ArrowRight, DollarSign, Youtube } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { resolveUploadedImage } from "@/lib/uploads"
 
 interface ChannelCardProps {
   id: string
@@ -88,21 +87,29 @@ export function ChannelCard({
     }
   }
 
-  // Default placeholder image if none provided
-  const imageUrl = channelImage || "/placeholder-channel.jpg"
+  // `null` when there is no image, or when the uploaded file is gone.
+  const imageUrl = resolveUploadedImage(channelImage)
 
   return (
     <Link href={`/buy-channel/${id}`}>
       <div className="group relative overflow-hidden rounded-xl border border-border bg-card transition-all duration-300 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5">
         {/* Channel Image with Overlay */}
         <div className="relative aspect-video w-full overflow-hidden bg-black/90">
-          <Image
-            src={imageUrl}
-            alt={title}
-            fill
-            className="object-contain transition-transform duration-500 group-hover:scale-105"
-            unoptimized={imageUrl.startsWith("/uploads/")}
-          />
+          {imageUrl ? (
+            <Image
+              src={imageUrl}
+              alt={title}
+              fill
+              // The avatar is square inside a 16:9 box (object-contain), so its
+              // rendered width is only ~56% of the card width.
+              sizes="(max-width: 640px) 60vw, (max-width: 1024px) 30vw, 20vw"
+              className="object-contain transition-transform duration-500 group-hover:scale-105"
+            />
+          ) : (
+            <div className="flex size-full items-center justify-center">
+              <Youtube className="size-16 text-white/25" />
+            </div>
+          )}
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 

@@ -8,6 +8,7 @@ import { RecentBlogs } from "@/components/blog/recent-blogs";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, Clock } from "lucide-react";
 import { sanitizeHtml } from "@/lib/sanitize";
+import { resolveUploadedImage } from "@/lib/uploads";
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -168,15 +169,15 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               </header>
 
               {/* Featured Image */}
-              {post.image && (
+              {resolveUploadedImage(post.image) && (
                 <div className="relative mb-8 aspect-video w-full overflow-hidden rounded-xl border border-border shadow-sm">
                   <Image
-                    src={post.image}
+                    src={resolveUploadedImage(post.image)!}
                     alt={post.title}
                     fill
+                    sizes="(max-width: 1024px) 100vw, 800px"
                     className="object-cover"
                     priority
-                    unoptimized={post.image.startsWith("/uploads/")}
                   />
                 </div>
               )}
@@ -215,7 +216,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                     id={relatedPost.id}
                     title={relatedPost.title}
                     excerpt={relatedPost.excerpt}
-                    image={relatedPost.image || "/placeholder-blog.jpg"}
+                    image={relatedPost.image}
                     date={formatDate(relatedPost.publishedAt)}
                     slug={relatedPost.slug}
                   />

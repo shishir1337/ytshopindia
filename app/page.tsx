@@ -13,6 +13,19 @@ export const metadata: Metadata = {
   description: "YT Shop India is the premier marketplace for buying and selling verified YouTube channels. Fast, secure, and trusted by thousands of creators.",
 }
 
+// Served from prerendered HTML for a fast TTFB.
+//
+// Freshness is on-demand, not on a timer: every route that changes what this
+// page shows already calls `revalidatePath("/")`, so an edit is live on the
+// next request - listings (admin create/update/delete), blog posts,
+// testimonials, analytics videos, site settings, and the Cryptomus webhook
+// that marks a channel sold.
+//
+// The 24h value is only a self-healing backstop for changes made outside those
+// routes (a direct database edit, or an analytics video being deleted on
+// YouTube). It is not the update path.
+export const revalidate = 86400
+
 export default function Home() {
   return (
     <main>

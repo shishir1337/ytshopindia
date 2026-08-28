@@ -1,16 +1,17 @@
 "use client";
 
-import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
-import { motion, AnimatePresence } from "motion/react";
-
+import Image from "next/image";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
 
-type Testimonial = {
+export type Testimonial = {
   quote: string;
   name: string;
   designation: string;
-  src: string;
+  /** `null` when the uploaded file is missing - an initial is shown instead. */
+  src: string | null;
 };
+
 export const AnimatedTestimonials = ({
   testimonials,
   autoplay = false,
@@ -28,136 +29,109 @@ export const AnimatedTestimonials = ({
     setActive((prev) => (prev - 1 + testimonials.length) % testimonials.length);
   };
 
-  const isActive = (index: number) => {
-    return index === active;
-  };
+  const isActive = (index: number) => index === active;
 
   useEffect(() => {
-    if (autoplay) {
-      const interval = setInterval(handleNext, 5000);
-      return () => clearInterval(interval);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoplay]);
+    if (!autoplay || testimonials.length <= 1) return;
 
-  const getRotation = (index: number) => {
-    return ((index * 7) % 21) - 10;
-  };
+    const interval = setInterval(
+      () => setActive((prev) => (prev + 1) % testimonials.length),
+      5000
+    );
+    return () => clearInterval(interval);
+  }, [autoplay, testimonials.length]);
+
+  const getRotation = (index: number) => ((index * 7) % 21) - 10;
 
   return (
     <div className="mx-auto max-w-sm px-4 py-20 font-sans antialiased md:max-w-4xl md:px-8 lg:px-12">
       <div className="relative grid grid-cols-1 gap-20 md:grid-cols-2">
         <div>
           <div className="relative h-80 w-full">
-            <AnimatePresence>
-              {testimonials.map((testimonial, index) => (
-                <motion.div
-                  key={testimonial.src}
-                  initial={{
-                    opacity: 0,
-                    scale: 0.9,
-                    z: -100,
-                    rotate: getRotation(index),
+            {testimonials.map((testimonial, index) => {
+              const active = isActive(index);
+              return (
+                <div
+                  key={`${testimonial.name}-${index}`}
+                  className="absolute inset-0 origin-bottom transition-[transform,opacity] duration-400 ease-in-out"
+                  style={{
+                    opacity: active ? 1 : 0.7,
+                    transform: `scale(${active ? 1 : 0.95}) rotate(${
+                      active ? 0 : getRotation(index)
+                    }deg)`,
+                    zIndex: active ? 40 : testimonials.length + 2 - index,
                   }}
-                  animate={{
-                    opacity: isActive(index) ? 1 : 0.7,
-                    scale: isActive(index) ? 1 : 0.95,
-                    z: isActive(index) ? 0 : -100,
-                    rotate: isActive(index) ? 0 : getRotation(index),
-                    zIndex: isActive(index)
-                      ? 40
-                      : testimonials.length + 2 - index,
-                    y: isActive(index) ? [0, -80, 0] : 0,
-                  }}
-                  exit={{
-                    opacity: 0,
-                    scale: 0.9,
-                    z: 100,
-                    rotate: getRotation(index),
-                  }}
-                  transition={{
-                    duration: 0.4,
-                    ease: "easeInOut",
-                  }}
-                  className="absolute inset-0 origin-bottom"
+                  aria-hidden={!active}
                 >
-                  <img
-                    src={testimonial.src}
-                    alt={testimonial.name}
-                    width={500}
-                    height={500}
-                    draggable={false}
-                    className="h-full w-full rounded-3xl object-cover object-center"
-                  />
-                </motion.div>
-              ))}
-            </AnimatePresence>
+                  {/* The pop animation restarts on its own whenever the class
+                      (and therefore animation-name) is toggled back on. */}
+                  <div
+                    className={`h-full w-full ${
+                      active ? "animate-testimonial-card-pop" : ""
+                    }`}
+                  >
+                    {testimonial.src ? (
+                      <Image
+                        src={testimonial.src}
+                        alt={testimonial.name}
+                        fill
+                        sizes="(max-width: 768px) 90vw, 420px"
+                        draggable={false}
+                        className="rounded-3xl object-cover object-center"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center rounded-3xl bg-primary/10 text-6xl font-bold text-primary">
+                        {testimonial.name.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
         <div className="flex flex-col justify-between py-4">
-          <motion.div
-            key={active}
-            initial={{
-              y: 20,
-              opacity: 0,
-            }}
-            animate={{
-              y: 0,
-              opacity: 1,
-            }}
-            exit={{
-              y: -20,
-              opacity: 0,
-            }}
-            transition={{
-              duration: 0.2,
-              ease: "easeInOut",
-            }}
-          >
+          <div key={active} className="animate-in fade-in duration-200">
             <h3 className="text-2xl font-bold text-foreground">
               {testimonials[active].name}
             </h3>
             <p className="text-sm text-muted-foreground">
               {testimonials[active].designation}
             </p>
-            <motion.p className="mt-8 text-lg text-muted-foreground">
+            <p className="mt-8 text-lg text-muted-foreground">
               {testimonials[active].quote.split(" ").map((word, index) => (
-                <motion.span
+                <span
                   key={index}
-                  initial={{
-                    filter: "blur(10px)",
-                    opacity: 0,
-                    y: 5,
-                  }}
-                  animate={{
-                    filter: "blur(0px)",
-                    opacity: 1,
-                    y: 0,
-                  }}
-                  transition={{
-                    duration: 0.2,
-                    ease: "easeInOut",
-                    delay: 0.02 * index,
-                  }}
-                  className="inline-block"
+                  className="inline-block animate-testimonial-word-in"
+                  style={{ animationDelay: `${0.02 * index}s` }}
                 >
                   {word}&nbsp;
-                </motion.span>
+                </span>
               ))}
-            </motion.p>
-          </motion.div>
+            </p>
+          </div>
           <div className="flex gap-4 pt-12 md:pt-0">
             <button
+              type="button"
               onClick={handlePrev}
-              className="group/button flex h-7 w-7 items-center justify-center rounded-full bg-muted hover:bg-primary hover:text-primary-foreground transition-colors"
+              aria-label="Previous testimonial"
+              className="group/button flex h-9 w-9 items-center justify-center rounded-full bg-muted hover:bg-primary hover:text-primary-foreground transition-colors"
             >
-              <IconArrowLeft className="h-5 w-5 text-foreground transition-transform duration-300 group-hover/button:rotate-12" />
+              <ArrowLeft
+                className="h-5 w-5 transition-transform duration-300 group-hover/button:rotate-12"
+                aria-hidden="true"
+              />
             </button>
             <button
+              type="button"
               onClick={handleNext}
-              className="group/button flex h-7 w-7 items-center justify-center rounded-full bg-muted hover:bg-primary hover:text-primary-foreground transition-colors"
+              aria-label="Next testimonial"
+              className="group/button flex h-9 w-9 items-center justify-center rounded-full bg-muted hover:bg-primary hover:text-primary-foreground transition-colors"
             >
-              <IconArrowRight className="h-5 w-5 text-foreground transition-transform duration-300 group-hover/button:-rotate-12" />
+              <ArrowRight
+                className="h-5 w-5 transition-transform duration-300 group-hover/button:-rotate-12"
+                aria-hidden="true"
+              />
             </button>
           </div>
         </div>

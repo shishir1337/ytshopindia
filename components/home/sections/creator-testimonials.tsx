@@ -1,7 +1,11 @@
-import { AnimatedTestimonials } from "@/components/ui/animated-testimonials"
+import {
+  AnimatedTestimonials,
+  type Testimonial,
+} from "@/components/ui/animated-testimonials"
 import { prisma } from "@/lib/prisma"
+import { resolveUploadedImage } from "@/lib/uploads"
 
-const dummyTestimonials = [
+const dummyTestimonials: Testimonial[] = [
   {
     quote:
       "YT SHOP INDIA made selling my channel incredibly easy. The process was smooth, and I got a fair price for my 50K subscriber channel. Highly recommended!",
@@ -49,10 +53,19 @@ const dummyTestimonials = [
 export async function CreatorTestimonials() {
   const dbTestimonials = await prisma.testimonial.findMany({
     where: { active: true },
+    select: { id: true, quote: true, name: true, designation: true, src: true },
     orderBy: { order: "asc" },
   })
 
-  const testimonials = dbTestimonials.length > 0 ? dbTestimonials : dummyTestimonials
+  const testimonials: Testimonial[] =
+    dbTestimonials.length > 0
+      ? dbTestimonials.map((testimonial) => ({
+          quote: testimonial.quote,
+          name: testimonial.name,
+          designation: testimonial.designation,
+          src: resolveUploadedImage(testimonial.src),
+        }))
+      : dummyTestimonials
 
   return (
     <section className="py-12 sm:py-16 lg:py-20 bg-background">
@@ -75,4 +88,3 @@ export async function CreatorTestimonials() {
     </section>
   )
 }
-

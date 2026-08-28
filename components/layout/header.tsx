@@ -39,7 +39,7 @@ const navItems = [
 export function Header() {
   const pathname = usePathname()
   const router = useRouter()
-  const { theme } = useTheme()
+  const { resolvedTheme } = useTheme()
   const [mounted, setMounted] = React.useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false)
   const { data: session } = authClient.useSession()
@@ -54,7 +54,7 @@ export function Header() {
   }, [])
 
   // Use light logo as default until mounted to avoid hydration mismatch
-  const logoSrc = mounted && theme === "dark" ? "/logo-dark.svg" : "/logo-light.svg"
+  const logoSrc = mounted && resolvedTheme === "dark" ? "/logo-dark.svg" : "/logo-light.svg"
 
   // Close mobile menu when route changes
   React.useEffect(() => {
