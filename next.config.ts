@@ -12,6 +12,9 @@ const nextConfig: NextConfig = {
     // Uploaded files have timestamped names and YouTube thumbnails are stable,
     // so optimized variants can be cached for a long time (30 days).
     minimumCacheTTL: 2592000,
+    // 60 is used for the channel/blog thumbnails; 75 stays available as the
+    // default for anything that asks for it.
+    qualities: [60, 75],
     remotePatterns: [
       {
         protocol: "https",

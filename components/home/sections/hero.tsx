@@ -55,7 +55,7 @@ export function Hero() {
                 <Users className="size-6" />
               </div>
               <div className="text-2xl font-bold text-foreground">
-                <AnimatedCounter value={2000} duration={2000} suffix="+" />
+                <AnimatedCounter value={2000} duration={600} suffix="+" />
               </div>
               <div className="text-sm text-muted-foreground">Deal Completed</div>
             </div>
@@ -64,7 +64,7 @@ export function Hero() {
                 <DollarSign className="size-6" />
               </div>
               <div className="text-2xl font-bold text-foreground">
-                <AnimatedCounter value={50} duration={2000} prefix="₹" suffix="M+" />
+                <AnimatedCounter value={50} duration={600} prefix="₹" suffix="M+" />
               </div>
               <div className="text-sm text-muted-foreground">Total Transactions</div>
             </div>
@@ -73,7 +73,7 @@ export function Hero() {
                 <TrendingUp className="size-6" />
               </div>
               <div className="text-2xl font-bold text-foreground">
-                <AnimatedCounter value={100} duration={2000} suffix="%" />
+                <AnimatedCounter value={100} duration={600} suffix="%" />
               </div>
               <div className="text-sm text-muted-foreground">Satisfaction Rate</div>
             </div>

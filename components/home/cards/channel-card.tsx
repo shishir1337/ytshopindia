@@ -107,6 +107,11 @@ export function ChannelCard({
               // earlier 60vw over-asked enough to pull the 640w candidate
               // instead of 384w.
               sizes="(max-width: 640px) 52vw, (max-width: 1024px) 26vw, 18vw"
+              // Measured on a real listing avatar at the 213px it renders at:
+              // q75 = 14.4KiB (PSNR 39.9dB vs source), q60 = 6.6KiB (34.3dB).
+              // A real but small fidelity cost for 54% fewer bytes on a
+              // below-the-fold thumbnail. Drop this prop to go back to q75.
+              quality={60}
               className="object-contain transition-transform duration-500 group-hover:scale-105"
             />
           ) : (
