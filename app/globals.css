@@ -59,7 +59,11 @@
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.145 0 0);
   --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
+  /* Darkened from 0.556: at 0.556 muted text on the tinted footer/section
+     backgrounds measured 4.54:1, only 0.04 above the WCAG AA minimum. This
+     lifts every muted text on the site to >=5:1. Dark mode already has ample
+     headroom (7.6:1) and is unchanged. */
+  --muted-foreground: oklch(0.52 0 0);
   --accent: oklch(0.96 0.05 15);
   --accent-foreground: oklch(0.5 0.22 15);
   --destructive: oklch(0.577 0.245 27.325);
@@ -304,15 +308,11 @@
   }
 }
 
-@keyframes testimonial-word-in {
+@keyframes testimonial-panel-in {
   from {
-    filter: blur(10px);
-    opacity: 0;
-    transform: translateY(5px);
+    transform: translateY(20px);
   }
   to {
-    filter: blur(0);
-    opacity: 1;
     transform: translateY(0);
   }
 }
@@ -321,18 +321,13 @@
   animation: testimonial-card-pop 0.4s ease-in-out;
 }
 
-.animate-testimonial-word-in {
-  opacity: 0;
-  animation: testimonial-word-in 0.2s ease-in-out forwards;
+.animate-testimonial-panel-in {
+  animation: testimonial-panel-in 0.25s ease-out;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-testimonial-card-pop {
-    animation: none;
-  }
-
-  .animate-testimonial-word-in {
-    opacity: 1;
+  .animate-testimonial-card-pop,
+  .animate-testimonial-panel-in {
     animation: none;
   }
 }

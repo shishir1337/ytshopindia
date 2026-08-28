@@ -100,9 +100,13 @@ export function ChannelCard({
               src={imageUrl}
               alt={title}
               fill
-              // The avatar is square inside a 16:9 box (object-contain), so its
-              // rendered width is only ~56% of the card width.
-              sizes="(max-width: 640px) 60vw, (max-width: 1024px) 30vw, 20vw"
+              // The avatar is square inside a 16:9 box (object-contain), so it
+              // renders at the box HEIGHT, i.e. 9/16 (0.5625) of the card
+              // width - not the card width itself. At a 412px viewport the
+              // card is ~380px and the avatar paints at ~214px = 52vw. The
+              // earlier 60vw over-asked enough to pull the 640w candidate
+              // instead of 384w.
+              sizes="(max-width: 640px) 52vw, (max-width: 1024px) 26vw, 18vw"
               className="object-contain transition-transform duration-500 group-hover:scale-105"
             />
           ) : (

@@ -1,9 +1,7 @@
 "use client"
 
-import Image from "next/image"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { useTheme } from "next-themes"
 import * as React from "react"
 import { ChevronDown, Menu, X, LogOut, LayoutDashboard, Shield } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -39,8 +37,6 @@ const navItems = [
 export function Header() {
   const pathname = usePathname()
   const router = useRouter()
-  const { resolvedTheme } = useTheme()
-  const [mounted, setMounted] = React.useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false)
   const { data: session } = authClient.useSession()
 
@@ -48,13 +44,6 @@ export function Header() {
     if (href === "/") return pathname === "/"
     return pathname.startsWith(href)
   }
-
-  React.useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  // Use light logo as default until mounted to avoid hydration mismatch
-  const logoSrc = mounted && resolvedTheme === "dark" ? "/logo-dark.svg" : "/logo-light.svg"
 
   // Close mobile menu when route changes
   React.useEffect(() => {
@@ -91,13 +80,14 @@ export function Header() {
         <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
           {/* Left: Logo */}
           <Link href="/" className="flex items-center z-50">
-            <Image
-              src={logoSrc}
-              alt="YT Shop India Logo"
-              width={120}
-              height={40}
-              className="h-8 w-auto sm:h-10"
-              priority
+            {/* Painted as a CSS background rather than an <img>: the browser only
+              fetches the URL whose rule actually matches, so a dark-mode visitor
+              downloads one 16KB logo instead of both. It also removes the
+              post-hydration src swap, which flashed the wrong logo. */}
+            <span
+              role="img"
+              aria-label="YT Shop India"
+              className="block h-8 sm:h-10 aspect-[579/102] bg-[url('/logo-light.svg')] bg-contain bg-left bg-no-repeat dark:bg-[url('/logo-dark.svg')]"
             />
           </Link>
 

@@ -66,14 +66,17 @@ export default function RootLayout({
           <Toaster />
         </ThemeProvider>
 
-        {/* Loaded after hydration instead of blocking the document head, so
-            the ~140KB gtag bundle no longer competes with the first render. */}
+        {/* `lazyOnload` holds the ~140KB gtag bundle until after the window
+            load event, keeping its ~330ms of script evaluation out of the
+            page's blocking time. Trade-off: tags fire roughly a second later
+            than with "afterInteractive". Switch this pair back to
+            "afterInteractive" if conversions need to fire as early as possible. */}
         <Script
           id="gtag-src"
           src={`https://www.googletagmanager.com/gtag/js?id=${GTAG_ID}`}
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
-        <Script id="gtag-init" strategy="afterInteractive">
+        <Script id="gtag-init" strategy="lazyOnload">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}

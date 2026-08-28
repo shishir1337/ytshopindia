@@ -1,8 +1,6 @@
 "use client"
 
-import Image from "next/image"
 import Link from "next/link"
-import { useTheme } from "next-themes"
 import * as React from "react"
 import { Facebook, Youtube, Instagram, Phone, Mail, MapPin } from "lucide-react"
 import { IconBrandTelegram } from "@tabler/icons-react"
@@ -43,15 +41,6 @@ const socialLinks = [
 ]
 
 export function Footer() {
-  const { resolvedTheme } = useTheme()
-  const [mounted, setMounted] = React.useState(false)
-
-  React.useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  const logoSrc = mounted && resolvedTheme === "dark" ? "/logo-dark.svg" : "/logo-light.svg"
-
   return (
     <footer className="w-full border-t border-t-primary/20 bg-muted/50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -60,13 +49,10 @@ export function Footer() {
           {/* Brand Section */}
           <div className="space-y-4 lg:col-span-2">
             <Link href="/" className="inline-block">
-              <Image
-                src={logoSrc}
-                alt="YT Shop India Logo"
-                width={150}
-                height={50}
-                className="h-10 w-auto mb-4"
-                priority
+              <span
+                role="img"
+                aria-label="YT Shop India"
+                className="block h-10 aspect-[579/102] mb-4 bg-[url('/logo-light.svg')] bg-contain bg-left bg-no-repeat dark:bg-[url('/logo-dark.svg')]"
               />
             </Link>
             <p className="text-sm text-muted-foreground max-w-sm">

@@ -91,23 +91,23 @@ export const AnimatedTestimonials = ({
           </div>
         </div>
         <div className="flex flex-col justify-between py-4">
-          <div key={active} className="animate-in fade-in duration-200">
+          {/* Slides in on position only - fading a text block dips its contrast
+              ratio below the WCAG minimum for the length of the fade. */}
+          <div key={active} className="animate-testimonial-panel-in">
             <h3 className="text-2xl font-bold text-foreground">
               {testimonials[active].name}
             </h3>
             <p className="text-sm text-muted-foreground">
               {testimonials[active].designation}
             </p>
+            {/* Rendered as a single text node. Splitting the quote into one
+                animated inline-block per word meant ~100 extra elements that
+                were torn down and re-laid-out every 5s by the autoplay, which
+                dominated style & layout time - and once the reveal had to drop
+                opacity and blur for contrast reasons, the per-word version was
+                visually indistinguishable from animating the panel. */}
             <p className="mt-8 text-lg text-muted-foreground">
-              {testimonials[active].quote.split(" ").map((word, index) => (
-                <span
-                  key={index}
-                  className="inline-block animate-testimonial-word-in"
-                  style={{ animationDelay: `${0.02 * index}s` }}
-                >
-                  {word}&nbsp;
-                </span>
-              ))}
+              {testimonials[active].quote}
             </p>
           </div>
           <div className="flex gap-4 pt-12 md:pt-0">

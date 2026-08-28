@@ -56,7 +56,10 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: "Cache-Control",
-            value: "public, max-age=86400, stale-while-revalidate=604800",
+            // 30 days, then served stale while a fresh copy is fetched. If a
+            // logo is ever replaced in place, rename the file so visitors pick
+            // it up immediately.
+            value: "public, max-age=2592000, stale-while-revalidate=31536000",
           },
         ],
       },
